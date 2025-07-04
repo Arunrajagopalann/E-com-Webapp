@@ -1,10 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
+import LoginSignup from "./pages/loginPage/loginPage";
 
 function App() {
   
   return (
+
+    
     <div className="App">
+      <LoginSignup/>
       
     </div>
 
