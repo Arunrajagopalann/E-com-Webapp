@@ -1,0 +1,3 @@
+const apiEndPoints={
+    "login":"login"
+}
