@@ -1,15 +1,14 @@
 import LoginSignup from "./pages/loginPage/loginPage";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   
   return (
-
-    
-    <div className="App">
-      <LoginSignup/>
-      
-    </div>
-
+    <AuthProvider>
+      <div className="App">
+        <LoginSignup/>
+      </div>
+    </AuthProvider>
   );
 }
 
