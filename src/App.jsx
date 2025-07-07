@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginSignup from "./pages/loginPage/loginPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
@@ -17,6 +18,11 @@ function App() {
         </Routes>
       </div>
     </Router>
+    // <AuthProvider>
+    //   <div className="App">
+    //     <LoginSignup/>
+    //   </div>
+    // </AuthProvider>
   );
 }
 
