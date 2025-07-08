@@ -32,10 +32,9 @@ const navigate = useNavigate();
     setSigninData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const API_BASE = 'http://localhost:8000/api/v1';
+  const API_BASE = 'http://localhost:8001/api/v1';
 
   const handleSignInSubmit = async (e) => {
-    console.log('signupData',signupData)
     e.preventDefault();
     try {
       const response = await fetch(`${API_BASE}/login`, {
