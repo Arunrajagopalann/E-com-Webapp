@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginSignup from "./pages/loginPage/loginPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { AuthProvider } from "./context/AuthContext";
+import CatagoryList from "./pages/catagory/catagoryList";
+import AddCategory from "./pages/catagory/addCatagory";
+// import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/signup" element={<LoginSignup />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/category" element={<CatagoryList />} />
+          <Route path="/addCategory" element={<AddCategory />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>

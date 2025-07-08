@@ -32,7 +32,9 @@ const navigate = useNavigate();
     setSigninData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const API_BASE = 'http://localhost:8000/api/v1';
+  const API_BASE =process.env.REACT_APP_API_BASE;
+console.log('API_BASE',API_BASE)
+
 
   const handleSignInSubmit = async (e) => {
     console.log('signupData',signupData)
@@ -44,7 +46,7 @@ const navigate = useNavigate();
         body: JSON.stringify(signinData)
       });
       const data = await response.json();
- navigate("/dashboard")
+      navigate("/dashboard")
       console.log('Login response:', data);
     } catch (error) {
       console.error('Login error:', error);
