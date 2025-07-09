@@ -13,35 +13,37 @@ function AddBrand() {
     brandName: '',
     status: "Active"
   });
+
   
-  const API_BASE = 'http://localhost:8001/api/v1'
+  const API_BASE = 'http://localhost:8000/api/v1'
   
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
   useEffect(() => {
+    const fetchBrand = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/brand/${id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await response.json();
+        setFormData({
+          brandName: data.data.brandName,
+          status: data.data.status
+        });
+      } catch (error) {
+        console.error('Fetch brand error:', error);
+      }
+    }
+
     console.log('type', type, type === 'edit')
     if (type === 'edit') {
       fetchBrand();
     }
-  }, [type])
+  }, [type, id, API_BASE])
 
-  const fetchBrand = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/brand/${id}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await response.json();
-      setFormData({ 
-        brandName: data.data.brandName,
-        status: data.data.status 
-      });
-    } catch (error) {
-      console.error('Fetch brand error:', error);
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -24,6 +24,21 @@ function CatagoryList() {
       console.error('Login error:', error);
     }
     }
+
+
+    const deleteCategory = async (id) => {
+      try {
+        const response = await fetch(`${API_BASE}/category/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await response.json();
+        console.log('data',data)
+        fetchCategories()
+      } catch (error) {
+        console.error('Login error:', error);
+      }
+      }
   return (
     <div>
 
@@ -34,7 +49,7 @@ function CatagoryList() {
       <th scope="col">#</th>
       <th scope="col" >categoryName</th>
       <th scope="col">status</th>
-      //action //
+      <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -43,6 +58,7 @@ function CatagoryList() {
         <th scope="row">{index + 1}</th>
         <td onClick ={()=>navigate(`/addCategory?type=edit&id=${category._id}`)}>{category.categoryName}</td>
         <td>{category.status}</td>
+        <td><button className='btn btn-danger' onClick={()=>deleteCategory(category._id)}>Del</button></td>
       </tr>
     ))}
   </tbody>

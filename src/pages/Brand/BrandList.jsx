@@ -1,9 +1,9 @@
 import React from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function BrandList() {
   const [brandList, setBrand] = React.useState([]);
-  const API_BASE = 'http://localhost:8001/api/v1'
+  const API_BASE = 'http://localhost:8000/api/v1'
   const navigate = useNavigate()
   
   React.useEffect(() => {
