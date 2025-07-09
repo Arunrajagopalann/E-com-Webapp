@@ -12,7 +12,7 @@ console.log('id',id)
         categoryName: '',
         status: "Active"
     });
-    const API_BASE = 'http://localhost:8000/api/v1'
+    const API_BASE = 'http://localhost:8001/api/v1'
     const handleInputChange = (e) => {
         // Handle input changes here
         setFormData({ ...formData, [e.target.name]: e.target.value });

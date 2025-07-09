@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
+
 function BrandList() {
   const [brandList, setBrand] = React.useState([]);
   const API_BASE = 'http://localhost:8000/api/v1'
@@ -23,12 +24,34 @@ function BrandList() {
       console.error('Fetch Brand Error:', error)
     }
   }
+  const deleteBrand = async (_id) => {
+    try {
+      const response = await fetch(`${API_BASE}/brand/${_id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      console.log('response', response)
+      const data = await response.json();
+      fetchBrand();
+    } catch (error) {
+      console.error('Delete Brand Error:', error)
+    }
+  }
   
   return (
-    <div>
-      <button className="btn btn-primary" onClick={() => navigate('/addBrand')}>
+   
+              <div className="card p-5 m-4" >
+
+            {/* <div className='container  py-2' > */}
+                 <div className='row justify-content-end' >
+<div className='col-3 text-end' >
+ <button className="btn btn-primary" onClick={() => navigate('/addBrand')}>
         Add Brand
       </button>
+            </div>
+            </div>
+            {/* </div> */}
+     
       <table className="table">
         <thead>
           <tr>
@@ -48,11 +71,17 @@ function BrandList() {
                 {brand.brandName}
               </td>
               <td>{brand.status}</td>
+               <button onClick={()=>{deleteBrand(brand._id)}}>Delete</button>
             </tr>
+            
+
           ))}
         </tbody>
       </table>
-    </div>
+          </div>
+         
+      
+   
   )
 }
 

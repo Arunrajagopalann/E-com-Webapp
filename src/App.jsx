@@ -12,13 +12,16 @@ import Product from "./pages/Product/Product";
 import AddBrand from "./pages/Brand/addBrand";
 import WarehouseList from "./pages/Warehouse/WarehouseList";
 import AddWarehouse from "./pages/Warehouse/addWarehouse";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './pages/Layout/Header'
+import ProductList from "./pages/Product/ProductList";
+import AddProduct from "./pages/Product/addProduct";
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <DashboardPage />
+        <Header/>
         <Routes>
           <Route path="/" element={<LoginSignup />} />
           <Route path="/login" element={<LoginSignup />} />
@@ -34,6 +37,8 @@ function App() {
           <Route path="/*" element={<NotFoundPage />} />
           <Route path="/warehouse" element={<WarehouseList />} />
           <Route path="/addWarehouse" element={<AddWarehouse />} />
+          <Route path="/product" element={<ProductList />} />
+          <Route path="/addProduct" element={<AddProduct />} />
         </Routes>
       </div>
     </Router>

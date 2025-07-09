@@ -66,7 +66,9 @@ console.log("formDAta",formData);
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
-      setFormData(data.data);
+      console.log('dataaaa',data);
+      
+      setFormData(data.data[0]);
     } catch (error) {
       console.error('Fetch warehouse error:', error);
     }
@@ -299,6 +301,8 @@ console.log("formDAta",formData);
         <button type="submit">
           {type === 'edit' ? 'Update Warehouse' : 'Add Warehouse'}
         </button>
+
+       
       </form>
     </div>
   )

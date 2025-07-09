@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
 function AddBrand() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();

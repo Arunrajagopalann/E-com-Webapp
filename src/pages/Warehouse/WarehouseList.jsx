@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
+
 function WarehouseList() {
   const [warehouseList, setWarehouse] = React.useState([]);
   const API_BASE = 'http://localhost:8001/api/v1'
@@ -23,8 +24,23 @@ function WarehouseList() {
       console.error('Fetch Warehouse Error:', error)
     }
   }
-  
+  const deleteWarehouse = async(_id)=>{
+    try {
+      const response = await fetch(`${API_BASE}/warehouse/${_id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      console.log('response', response)
+      
+      const data = await response.json();
+      fetchWarehouse();
+    }catch (error) {
+      console.error('Delete Warehouse Error:', error)
+    }
+
+  }
   return (
+    
     <div>
       <button className="btn btn-primary" onClick={() => navigate('/addWarehouse')}>
         Add Warehouse
@@ -60,6 +76,7 @@ function WarehouseList() {
               <td>{warehouse.poc}</td>
               <td>{warehouse.stock}</td>
               <td>{warehouse.status}</td>
+              <button onClick={()=>{deleteWarehouse(warehouse._id)}}>Delete</button>
             </tr>
           ))}
         </tbody>
