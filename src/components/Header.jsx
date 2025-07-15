@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
 import OffCanvasMenu from "./OffCanvasMenu";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = ({ toggle }) => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Header = ({ toggle }) => {
         </div>
         <OffCanvasMenu isOpen={isMenuOpen} toggle={toggleMenu} />
         <h2>User View</h2>
-        <button className="header-right" onClick={() => navigate("/Login")}>
+        <button className="header-right btn-danger" onClick={() => navigate("/Login")}>
           Logout
         </button>
       </div>
@@ -81,3 +82,5 @@ const Header = ({ toggle }) => {
 };
 
 export default Header;
+
+

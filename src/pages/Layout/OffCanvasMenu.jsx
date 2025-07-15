@@ -13,6 +13,7 @@ const OffCanvasMenu = ({ isOpen, toggle }) => {
         visibility: isOpen ? "visible" : "hidden",
         backgroundColor: "white",
         zIndex: 1045, // Make sure it stacks properly
+        width: "150px"
       }}
     >
       <div className="offcanvas-header">

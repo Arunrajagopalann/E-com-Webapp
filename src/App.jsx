@@ -8,7 +8,6 @@ import AddCategory from "./pages/catagory/addCatagory";
 import { AuthProvider } from "./context/AuthContext";
 import BrandList from "./pages/Brand/BrandList";
 import Warehouse from "./pages/Warehouse/WarehouseList";
-import Product from "./pages/Product/Product";
 import AddBrand from "./pages/Brand/addBrand";
 import WarehouseList from "./pages/Warehouse/WarehouseList";
 import AddWarehouse from "./pages/Warehouse/addWarehouse";
@@ -32,7 +31,6 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/Brand" element={<BrandList />} />
           <Route path="/Warehouse" element={<Warehouse />} />
-          <Route path="/Product" element={<Product/>} />
           <Route path="/addBrand" element={<AddBrand />} />
           <Route path="/*" element={<NotFoundPage />} />
           <Route path="/warehouse" element={<WarehouseList />} />

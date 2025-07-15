@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { useLocation, Link,useNavigate } from 'react-router-dom';
-import '../../styles/loginPage/loginPage.css';
+import React, { useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import "../../styles/loginPage/loginPage.css";
 
 const LoginSignup = () => {
   const location = useLocation();
   const isSignup = location.pathname === "/signup";
-const navigate = useNavigate();
+  const navigate = useNavigate();
   // State for sign up
   const [signupData, setSignupData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
   });
 
   // State for sign in
   const [signinData, setSigninData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   // Handle input changes
@@ -32,22 +32,21 @@ const navigate = useNavigate();
     setSigninData((prev) => ({ ...prev, [name]: value }));
   };
 
-
-  const API_BASE = 'http://localhost:8000/api/v1';
+  const API_BASE = "http://localhost:8001/api/v1";
 
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(signinData)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signinData),
       });
       const data = await response.json();
-      navigate("/dashboard")
-      console.log('Login response:', data);
+      navigate("/dashboard");
+      console.log("Login response:", data);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     }
   };
 
@@ -55,31 +54,59 @@ const navigate = useNavigate();
     e.preventDefault();
     try {
       const response = await fetch(`${API_BASE}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(signupData)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signupData),
       });
       const data = await response.json();
-      console.log('Signup response:', data);
+      console.log("Signup response:", data);
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error("Signup error:", error);
     }
   };
 
   return (
     <div className="login-page">
-      <div className={`container ${isSignup ? 'active' : ''}`}>
-
+      <div className={`container ${isSignup ? "active" : ""}`}>
         {/* Sign Up Container */}
         <div className="form-container sign-up">
           <div className="form-content">
             <h1>Create Account</h1>
             <span>or use your email for registration</span>
-            <input type="text" name="name" placeholder="Name" value={signupData.name} onChange={handleSignupChange} />
-            <input type="email" name="email" placeholder="Email" value={signupData.email} onChange={handleSignupChange} />
-            <input type="password" name="password" placeholder="Password" value={signupData.password} onChange={handleSignupChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" value={signupData.confirmPassword} onChange={handleSignupChange} />
-            <select className="role-select" name="role" value={signupData.role} onChange={handleSignupChange}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={signupData.name}
+              onChange={handleSignupChange}
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={signupData.email}
+              onChange={handleSignupChange}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={signupData.password}
+              onChange={handleSignupChange}
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={signupData.confirmPassword}
+              onChange={handleSignupChange}
+            />
+            <select
+              className="role-select"
+              name="role"
+              value={signupData.role}
+              onChange={handleSignupChange}
+            >
               <option value="">Select Role</option>
               <option value="User">User</option>
               <option value="Admin">Admin</option>
@@ -95,9 +122,23 @@ const navigate = useNavigate();
           <div className="form-content">
             <h1>Sign In</h1>
             <span>or use your email password</span>
-            <input type="email" name="email" placeholder="Email" value={signinData.email} onChange={handleSigninChange} />
-            <input type="password" name="password" placeholder="Password" value={signinData.password} onChange={handleSigninChange} />
-            <button type="button" className="forgot-password">Forget Your Password?</button>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={signinData.email}
+              onChange={handleSigninChange}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={signinData.password}
+              onChange={handleSigninChange}
+            />
+            <button type="button" className="forgot-password">
+              Forget Your Password?
+            </button>
             <button onClick={handleSignInSubmit}>Sign In</button>
           </div>
         </div>
@@ -114,7 +155,9 @@ const navigate = useNavigate();
             </div>
             <div className="toggle-panel toggle-right">
               <h1>Hello, Friend!</h1>
-              <p>Register with your personal details to use all of site features</p>
+              <p>
+                Register with your personal details to use all of site features
+              </p>
               <Link to="/signup">
                 <button className="hidden">Sign Up</button>
               </Link>

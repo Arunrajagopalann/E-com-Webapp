@@ -1,185 +1,215 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import "./Warehouse.css";
 
 function AddWarehouse() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const id = searchParams.get('id')
-  const type = searchParams.get('type')
+  const id = searchParams.get("id");
+  const type = searchParams.get("type");
+  const isEdit = type === "edit";
 
-  console.log('id', id)
-  
   const [formData, setFormData] = useState({
-    warehouseName: '',
-    warehouseType: 'Distribution Center',
+    warehouseName: "",
+    warehouseType: "PRIMARY",
+    poc: "",
+    phone: "",
+    email: "",
+    stock: 0,
+    status: "ACTIVE",
     address: [
       {
-        addressType: 'Primary',
-        addressLine1: '',
-        addressLine2: '',
-        country: 'India',
-        state: '',
-        city: '',
-        postalCode: ''
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "",
       },
-      {
-        addressType: 'Secondary',
-        addressLine1: '',
-        addressLine2: '',
-        country: 'India',
-        state: '',
-        city: '',
-        postalCode: ''
-      }
     ],
-    poc: '',
-    stock: 0,
-    status: 'ACTIVE'
   });
-  
-console.log("formDAta",formData);
 
-
-  const API_BASE = 'http://localhost:8001/api/v1'
-  
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
-  const handleAddressChange = (index, field, value) => {
-    const updatedAddress = [...formData.address];
-    updatedAddress[index][field] = value;
-    setFormData({ ...formData, address: updatedAddress });
-  }
+  const API_BASE = "http://localhost:8001/api/v1";
 
   useEffect(() => {
-    console.log('type', type, type === 'edit')
-    if (type === 'edit') {
-      fetchWarehouse();
+    if (isEdit && id) {
+      fetchWarehouseData();
     }
-  }, [type])
+  }, [isEdit, id]);
 
-  const fetchWarehouse = async () => {
+  const fetchWarehouseData = async () => {
     try {
-      const response = await fetch(`${API_BASE}/warehouse/${id}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(`${API_BASE}/warehouse/${id}`);
       const data = await response.json();
-      console.log('dataaaa',data);
-      
-      setFormData(data.data[0]);
+      if (data.success) {
+        // Ensure address array has at least one item
+        const warehouseData = data.data;
+        if (!warehouseData.address || warehouseData.address.length === 0) {
+          warehouseData.address = [
+            {
+              addressLine1: "",
+              addressLine2: "",
+              city: "",
+              state: "",
+              zipCode: "",
+              country: "",
+            },
+          ];
+        }
+        setFormData(warehouseData);
+      }
     } catch (error) {
-      console.error('Fetch warehouse error:', error);
+      console.error("Error fetching warehouse:", error);
     }
-  }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleAddressChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedAddress = [...formData.address];
+    updatedAddress[index] = {
+      ...updatedAddress[index],
+      [name]: value,
+    };
+
+    setFormData({
+      ...formData,
+      address: updatedAddress,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      let url = type === 'edit' ? `${API_BASE}/warehouse/${id}` : `${API_BASE}/warehouse`;
-      const methodType = (type === 'edit') ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method: methodType,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await response.json();
 
-      if (data.statusCode === 200) {
-        // Reset form after successful submission
-        setFormData({
-          warehouseName: '',
-          warehouseType: 'Distribution Center',
-          address: [
-            {
-              addressType: 'Primary',
-              addressLine1: '',
-              addressLine2: '',
-              country: 'India',
-              state: '',
-              city: '',
-              postalCode: ''
-            },
-            {
-              addressType: 'Secondary',
-              addressLine1: '',
-              addressLine2: '',
-              country: 'India',
-              state: '',
-              city: '',
-              postalCode: ''
-            }
-          ],
-          poc: '',
-          stock: 0,
-          status: 'ACTIVE'
-        });
-        navigate('/warehouse');
+    try {
+      const url = isEdit
+        ? `${API_BASE}/warehouse/${id}`
+        : `${API_BASE}/warehouse`;
+      const method = isEdit ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      console.log("Response:", data);
+
+      if (data.success) {
+        navigate("/warehouse");
       }
     } catch (error) {
-      console.error('Submit error:', error);
+      console.error("Error submitting form:", error);
     }
-  }
+  };
 
   return (
-    <div>
-      <h2>{type === 'edit' ? 'Edit Warehouse' : 'Add Warehouse'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Warehouse Name:</label>
-          <input 
-            type="text" 
-            value={formData.warehouseName} 
-            name="warehouseName" 
-            onChange={handleInputChange} 
-            required 
-          />
-        </div>
-        
-        <div>
-          <label>Warehouse Type:</label>
-          <select 
-            name="warehouseType" 
-            value={formData.warehouseType} 
-            onChange={handleInputChange}
-          >
-            <option value="Distribution Center">Distribution Center</option>
-            <option value="Fulfillment Center">Fulfillment Center</option>
-            <option value="Storage Facility">Storage Facility</option>
-            <option value="Cold Storage">Cold Storage</option>
-          </select>
+    <div className="warehouse-form-container">
+      <div className="form-header">
+        <h1>{isEdit ? "Edit Warehouse" : "Add Warehouse"}</h1>
+        <button className="btn-back" onClick={() => navigate("/warehouse")}>
+          Back to Warehouses
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="warehouse-form">
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="warehouseName">Warehouse Name*</label>
+            <input
+              type="text"
+              id="warehouseName"
+              name="warehouseName"
+              value={formData.warehouseName}
+              onChange={handleInputChange}
+              placeholder="Enter warehouse name"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="warehouseType">Type</label>
+            <select
+              id="warehouseType"
+              name="warehouseType"
+              value={formData.warehouseType}
+              onChange={handleInputChange}
+            >
+              <option value="PRIMARY">Primary</option>
+              <option value="SECONDARY">Secondary</option>
+              <option value="DISTRIBUTION">Distribution</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label>POC (Point of Contact):</label>
-          <input 
-            type="text" 
-            value={formData.poc} 
-            name="poc" 
-            onChange={handleInputChange} 
-            required 
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="poc">Point of Contact</label>
+            <input
+              type="text"
+              id="poc"
+              name="poc"
+              value={formData.poc}
+              onChange={handleInputChange}
+              placeholder="Contact person name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="phone">Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="Contact phone number"
+            />
+          </div>
         </div>
 
-        <div>
-          <label>Stock:</label>
-          <input 
-            type="number" 
-            value={formData.stock} 
-            name="stock" 
-            onChange={handleInputChange} 
-            required 
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Contact email address"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="stock">Stock</label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={formData.stock}
+              onChange={handleInputChange}
+              placeholder="Current stock amount"
+            />
+          </div>
         </div>
 
-        <div>
-          <label>Status:</label>
-          <select 
-            name="status" 
-            value={formData.status} 
+        <div className="form-group">
+          <label htmlFor="status">Status</label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
             onChange={handleInputChange}
           >
             <option value="ACTIVE">Active</option>
@@ -187,125 +217,103 @@ console.log("formDAta",formData);
           </select>
         </div>
 
-        {/* Primary Address */}
-        <div>
-          <h3>Primary Address</h3>
-          <div>
-            <label>Address Line 1:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].addressLine1} 
-              onChange={(e) => handleAddressChange(0, 'addressLine1', e.target.value)}
-              required 
-            />
-          </div>
-          <div>
-            <label>Address Line 2:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].addressLine2} 
-              onChange={(e) => handleAddressChange(0, 'addressLine2', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Country:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].country} 
-              onChange={(e) => handleAddressChange(0, 'country', e.target.value)}
-              required 
-            />
-          </div>
-          <div>
-            <label>State:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].state} 
-              onChange={(e) => handleAddressChange(0, 'state', e.target.value)}
-              required 
-            />
-          </div>
-          <div>
-            <label>City:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].city} 
-              onChange={(e) => handleAddressChange(0, 'city', e.target.value)}
-              required 
-            />
-          </div>
-          <div>
-            <label>Postal Code:</label>
-            <input 
-              type="text" 
-              value={formData.address[0].postalCode} 
-              onChange={(e) => handleAddressChange(0, 'postalCode', e.target.value)}
-              required 
-            />
+        <div className="address-section">
+          <h3>Address</h3>
+          <div className="address-grid">
+            <div className="form-group">
+              <label htmlFor="addressLine1">Address Line 1*</label>
+              <input
+                type="text"
+                id="addressLine1"
+                name="addressLine1"
+                value={formData.address[0].addressLine1}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="Street address"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="addressLine2">Address Line 2</label>
+              <input
+                type="text"
+                id="addressLine2"
+                name="addressLine2"
+                value={formData.address[0].addressLine2}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="Apartment, suite, etc."
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="city">City*</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={formData.address[0].city}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="City"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="state">State/Province*</label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                value={formData.address[0].state}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="State or province"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="zipCode">Postal Code*</label>
+              <input
+                type="text"
+                id="zipCode"
+                name="zipCode"
+                value={formData.address[0].zipCode}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="ZIP or postal code"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="country">Country*</label>
+              <input
+                type="text"
+                id="country"
+                name="country"
+                value={formData.address[0].country}
+                onChange={(e) => handleAddressChange(e, 0)}
+                placeholder="Country"
+                required
+              />
+            </div>
           </div>
         </div>
 
-        {/* Secondary Address */}
-        <div>
-          <h3>Secondary Address</h3>
-          <div>
-            <label>Address Line 1:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].addressLine1} 
-              onChange={(e) => handleAddressChange(1, 'addressLine1', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Address Line 2:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].addressLine2} 
-              onChange={(e) => handleAddressChange(1, 'addressLine2', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Country:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].country} 
-              onChange={(e) => handleAddressChange(1, 'country', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>State:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].state} 
-              onChange={(e) => handleAddressChange(1, 'state', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>City:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].city} 
-              onChange={(e) => handleAddressChange(1, 'city', e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Postal Code:</label>
-            <input 
-              type="text" 
-              value={formData.address[1].postalCode} 
-              onChange={(e) => handleAddressChange(1, 'postalCode', e.target.value)}
-            />
-          </div>
+        <div className="form-actions">
+          <button type="submit" className="btn-submit">
+            {isEdit ? "Update Warehouse" : "Add Warehouse"}
+          </button>
+          <button
+            type="button"
+            className="btn-cancel"
+            onClick={() => navigate("/warehouse")}
+          >
+            Cancel
+          </button>
         </div>
-
-        <button type="submit">
-          {type === 'edit' ? 'Update Warehouse' : 'Add Warehouse'}
-        </button>
-
-       
       </form>
     </div>
-  )
+  );
 }
 
-export default AddWarehouse
+export default AddWarehouse;
