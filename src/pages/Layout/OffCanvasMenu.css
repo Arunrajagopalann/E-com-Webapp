@@ -1,0 +1,250 @@
+#wrapper {
+  display: flex;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+#sidebar-wrapper {
+  width: 250px;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #667eea, #5fc3e4); /* Gradient background */
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+#sidebar-wrapper.collapsed {
+  width: 70px;
+}
+
+.sidebar-heading {
+  padding: 1rem;
+  color: #fff;
+  background: #667eea; /* Solid color from gradient start */
+  font-size: 1rem;
+}
+
+.list-group-item {
+  background: transparent;
+  color: #ffffff; /* White text for better contrast on gradient */
+  border: none;
+  border-radius: 0;
+  transition: background 0.3s, color 0.3s;
+  padding: 10px 20px;
+  text-decoration: none;
+}
+
+.list-group-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-left: 2px solid #ffffff; /* White accent for hover */
+}
+
+#page-content-wrapper {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  #sidebar-wrapper {
+    position: absolute;
+    z-index: 999;
+  }
+}
+
+#userDropdown img {
+  border-radius: 50%;
+}
+
+#userDropdown svg {
+  transform: translateY(2px);
+}
+
+.dropdown-menu-end {
+  min-width: 180px;
+}
+
+/* Remove duplicate styles and keep only these updated ones */
+/* #sidebar-wrapper is already defined above with gradient */
+
+#page-content-wrapper {
+  flex-grow: 1;
+  transition: all 0.3s ease;
+}
+
+.navbar{
+  height: 64px;
+  background: linear-gradient(to right, #667eea, #5fc3e4); /* Match sidebar gradient */
+  color: white;
+  box-shadow: 0 2px 10px rgba(95, 195, 228, 0.3);
+}
+
+.navbar .navbar-brand {
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.bg-white {
+  background: linear-gradient(to right, #667eea, #5fc3e4) !important;
+  color: white !important;
+}
+
+.active-nav-item {
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+}
+
+.active-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+}
+
+/* Styling for buttons in navbar */
+.navbar .btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.navbar .btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dash-sidebar-content{
+  height: 87vh;
+  overflow-y: auto !important;
+}
+
+/* Custom scrollbar styling */
+.dash-sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dash-sidebar-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dash-sidebar-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #667eea, #5fc3e4);
+  border-radius: 10px;
+}
+
+/* Custom button styling to match theme */
+.btn-theme {
+  background: linear-gradient(to right, #667eea, #5fc3e4);
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-theme:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+
+@media (max-width: 575.98px) {
+  .navbar .navbar-brand {
+    font-size: 16px;
+    color: white;
+  }
+
+  .navbar .btn {
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .navbar img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar .text-start {
+    display: none;
+  }
+
+  .navbar .gap-3 {
+    gap: 0.5rem !important;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .navbar .navbar-brand {
+    font-size: 18px;
+    color: white;
+  }
+
+  .navbar .text-start {
+    display: none;
+  }
+
+  .navbar img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .navbar .navbar-brand {
+    font-size: 20px;
+  }
+
+  .navbar img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .navbar .text-start {
+    display: block;
+  }
+}
+
+/* Large Devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .navbar .navbar-brand {
+    font-size: 22px;
+  }
+
+  .navbar img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .navbar .text-start {
+    display: block;
+  }
+}
+
+/* Dropdown styling to match theme */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  margin-top: 8px;
+  min-width: 200px;
+  padding: 8px 0;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+  color: #495057;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(to right, rgba(102, 126, 234, 0.1), rgba(95, 195, 228, 0.1));
+  color: #667eea;
+}
+
+.dropdown-divider {
+  margin: 4px 0;
+}

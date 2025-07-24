@@ -1,0 +1,380 @@
+/* Dashboard Layout Styles */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styles */
+.dashboard-sidebar {
+  width: 220px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.logo-text {
+  color: #00a06d;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.sidebar-menu {
+  padding: 20px 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #666;
+}
+
+.menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+.menu-item.active {
+  background-color: #e8f7f1;
+  color: #00a06d;
+  border-left: 3px solid #00a06d;
+}
+
+/* Error message styling */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #f5c6cb;
+}
+
+.error-message small {
+  display: block;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.menu-icon {
+  margin-right: 12px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Main Content Styles */
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.search-bar input {
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content Styles */
+.dashboard-content {
+  padding: 30px;
+  flex: 1;
+}
+
+.section-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Overview Cards */
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: #e8f7f1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.card-primary {
+  background-color: #00a06d;
+  color: white;
+}
+
+.card-body {
+  padding: 20px;
+  position: relative;
+}
+
+.card-title {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.card-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.card-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Declarations Table */
+.declarations-table {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+td {
+  padding: 15px 20px;
+}
+
+.product-code {
+  background-color: #e8b87a;
+  color: white;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.product-id {
+  color: #999;
+}
+
+.btn-download {
+  color: #00a06d;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.btn-review {
+  background-color: transparent;
+  border: 1px solid #f0ad4e;
+  color: #f0ad4e;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-approved {
+  background-color: transparent;
+  border: 1px solid #28a745;
+  color: #28a745;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-declined {
+  background-color: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-more {
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+}
+
+.btn-view-more {
+  background: none;
+  border: none;
+  color: #00a06d;
+  cursor: pointer;
+}
+
+/* Add to your Dashboard.css file */
+.sidebar-menu .menu-item {
+  cursor: pointer;
+}
+
+table thead th {
+  text-align: left;
+  padding: 15px 20px;
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-review {
+  background-color: transparent;
+  border: 1px solid #f0ad4e;
+  color: #f0ad4e;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dashboard-sidebar .menu-item:hover {
+  background-color: rgba(0, 160, 109, 0.1);
+}
+
+.user-info {
+  cursor: pointer;
+}
+
+/* Add to Dashboard.css */
+.product-table th, 
+.product-table td {
+  padding: 12px 15px;
+}
+
+.product-price {
+  font-weight: 600;
+  color: #2da0a8;
+}
+
+.product-stock {
+  font-weight: 500;
+}
+
+.product-category {
+  color: #666;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.status-badge.inactive {
+  background-color: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+.status-badge.declined {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.btn-view {
+  background-color: #2da0a8;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view:hover {
+  background-color: #258a91;
+}
+
+.loading-indicator,
+.no-data {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .overview-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .dashboard-sidebar {
+    width: 100%;
+    position: sticky;
+    top: 0;
+  }
+  
+  .overview-cards {
+    grid-template-columns: 1fr;
+  }
+}

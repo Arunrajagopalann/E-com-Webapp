@@ -1,10 +1,9 @@
-.header {
+/* .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f4f4f4;
+  background: linear-gradient(to right, #667eea, #5fc3e4);
   padding: 10px 20px;
-  border-bottom: 1px solid #ccc;
 }
 
 .menu-btn {
@@ -16,4 +15,4 @@
 
 .header-right {
   font-weight: bold;
-}
+} */

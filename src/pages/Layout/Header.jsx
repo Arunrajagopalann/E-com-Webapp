@@ -8,21 +8,22 @@ const Header = ({ toggle }) => {
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
   return (
-    <div className="header">
-      <div
-        onClick={toggleMenu}
-        style={{ cursor: "pointer" }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M3 18v-2h18v2zm0-5v-2h18v2zm0-5V6h18v2z"/>
-        </svg>
-      </div>
-      <OffCanvasMenu isOpen={isMenuOpen} toggle={toggleMenu} />
-      <h2>User View</h2>
-      <button className="header-right" onClick={() => navigate("/Login")}>
-        Logout
-      </button>
-    </div>
+    // <div className="header">
+    //   <div
+    //     onClick={toggleMenu}
+    //     style={{ cursor: "pointer" }}
+    //   >
+    //     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    //       <path fill="currentColor" d="M3 18v-2h18v2zm0-5v-2h18v2zm0-5V6h18v2z"/>
+    //     </svg>
+    //   </div>
+    //   <OffCanvasMenu isOpen={isMenuOpen} toggle={toggleMenu} />
+    //   <h2></h2>
+    //   <button className="btn btn-danger header-right" onClick={() => navigate("/Login")}>
+    //     Logout
+    //   </button>
+    // </div>
+    <p></p>
   );
 };
 
