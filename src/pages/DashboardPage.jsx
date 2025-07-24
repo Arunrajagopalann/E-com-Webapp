@@ -1,10 +1,6 @@
-import React, { useState } from 'react';
-import OffCanvasMenu from '../pages/Layout/OffCanvasMenu'
+import React from 'react';
 
 const Dashboard = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
-
   return (
     <div>
     {/* //    Toggle Button

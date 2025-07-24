@@ -4,8 +4,10 @@ import "./Category.css"; // Import the CSS
 
 function CatagoryList() {
   const [categories, setCategories] = React.useState([]);
-  const API_BASE = "http://localhost:8001/api/v1";
+  const API_BASE = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem("accessToken");
+
   React.useEffect(() => {
     fetchCategories();
   }, []);
@@ -14,28 +16,41 @@ function CatagoryList() {
     try {
       const response = await fetch(`${API_BASE}/category`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
-      console.log("response", response);
       const data = await response.json();
-
-      setCategories(data.data);
+      if (data.success) setCategories(data.data);
+      else setCategories([]);
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Fetch Category Error:", error);
     }
   };
 
-  const deleteCategory = async (id) => {
+  const deleteCategory = async (_id) => {
+    if (!accessToken) {
+      alert("Unauthorized: Please log in.");
+      return;
+    }
     try {
-      const response = await fetch(`${API_BASE}/category/${id}`, {
+      const response = await fetch(`${API_BASE}/category/${_id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
       const data = await response.json();
-      console.log("data", data);
+      if (!response.ok || !data.success) {
+        alert(data.message || "Delete failed.");
+        return;
+      }
       fetchCategories();
     } catch (error) {
-      console.error("Login error:", error);
+      alert("Error deleting category.");
+      console.error("Delete Category Error:", error);
     }
   };
   return (

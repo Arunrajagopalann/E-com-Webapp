@@ -2,7 +2,6 @@ import {React,useState} from "react";
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
 import OffCanvasMenu from './OffCanvasMenu'
-import { Cursor } from "mongoose";
 const Header = ({ toggle }) => {
   const navigate = useNavigate();
    const [isMenuOpen, setIsMenuOpen] = useState(false);

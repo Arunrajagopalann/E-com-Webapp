@@ -15,7 +15,7 @@ function AddWarehouse() {
     poc: "",
     phone: "",
     email: "",
-    stock: 0,
+    stock: "",
     status: "ACTIVE",
     address: [
       {
@@ -29,7 +29,7 @@ function AddWarehouse() {
     ],
   });
 
-  const API_BASE = "http://localhost:8001/api/v1";
+  const API_BASE = process.env.REACT_APP_BASE_URL;
 
   useEffect(() => {
     if (isEdit && id) {
@@ -39,24 +39,18 @@ function AddWarehouse() {
 
   const fetchWarehouseData = async () => {
     try {
-      const response = await fetch(`${API_BASE}/warehouse/${id}`);
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await fetch(`${API_BASE}/warehouse/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
-      if (data.success) {
-        // Ensure address array has at least one item
-        const warehouseData = data.data;
-        if (!warehouseData.address || warehouseData.address.length === 0) {
-          warehouseData.address = [
-            {
-              addressLine1: "",
-              addressLine2: "",
-              city: "",
-              state: "",
-              zipCode: "",
-              country: "",
-            },
-          ];
-        }
-        setFormData(warehouseData);
+      
+      if (data.statusCode === 200) {
+        setFormData(data.data[0],);
       }
     } catch (error) {
       console.error("Error fetching warehouse:", error);
@@ -78,7 +72,6 @@ function AddWarehouse() {
       ...updatedAddress[index],
       [name]: value,
     };
-
     setFormData({
       ...formData,
       address: updatedAddress,
@@ -87,29 +80,31 @@ function AddWarehouse() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      alert("Unauthorized: Please log in.");
+      return;
+    }
     try {
-      const url = isEdit
-        ? `${API_BASE}/warehouse/${id}`
-        : `${API_BASE}/warehouse`;
+      const url = isEdit ? `${API_BASE}/warehouse/${id}` : `${API_BASE}/warehouse`;
       const method = isEdit ? "PUT" : "POST";
-
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
-      console.log("Response:", data);
-
-      if (data.success) {
-        navigate("/warehouse");
+      if (!response.ok || !data.success) {
+        alert(data.message || (isEdit ? "Update failed." : "Create failed."));
+        return;
       }
+      navigate("/warehouse");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      alert(isEdit ? "Error updating warehouse." : "Error creating warehouse.");
+      console.error("Submit error:", error);
     }
   };
 

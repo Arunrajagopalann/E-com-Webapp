@@ -1,18 +1,15 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginSignup from "./pages/loginPage/loginPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CatagoryList from "./pages/catagory/catagoryList";
-import AddCategory from "./pages/catagory/addCatagory";
-import { AuthProvider } from "./context/AuthContext";
 import BrandList from "./pages/Brand/BrandList";
-import Warehouse from "./pages/Warehouse/WarehouseList";
 import AddBrand from "./pages/Brand/addBrand";
 import WarehouseList from "./pages/Warehouse/WarehouseList";
 import AddWarehouse from "./pages/Warehouse/addWarehouse";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from './pages/Layout/Header'
+import AddCategory from "./pages/catagory/addCatagory";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "./pages/Layout/Header";
 import ProductList from "./pages/Product/ProductList";
 import AddProduct from "./pages/Product/addProduct";
 
@@ -20,7 +17,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header/>
+        <Header />
         <Routes>
           <Route path="/" element={<LoginSignup />} />
           <Route path="/login" element={<LoginSignup />} />
@@ -28,23 +25,17 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/category" element={<CatagoryList />} />
           <Route path="/addCategory" element={<AddCategory />} />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/Brand" element={<BrandList />} />
-          <Route path="/Warehouse" element={<Warehouse />} />
+          <Route path="/brand" element={<BrandList />} />
           <Route path="/addBrand" element={<AddBrand />} />
-          <Route path="/*" element={<NotFoundPage />} />
           <Route path="/warehouse" element={<WarehouseList />} />
           <Route path="/addWarehouse" element={<AddWarehouse />} />
+          <Route path="/warehouse/add" element={<AddWarehouse />} />
           <Route path="/product" element={<ProductList />} />
           <Route path="/addProduct" element={<AddProduct />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </Router>
-    // <AuthProvider>
-    //   <div className="App">
-    //     <LoginSignup/>
-    //   </div>
-    // </AuthProvider>
   );
 }
 

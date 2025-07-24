@@ -15,8 +15,7 @@ function AddCatagory() {
     status: "Active",
   });
 
-  const API_BASE = "http://localhost:8001/api/v1";
-
+  const API_BASE = process.env.REACT_APP_BASE_URL
   useEffect(() => {
     if (isEdit && id) {
       fetchCategoryData();
@@ -25,7 +24,14 @@ function AddCatagory() {
 
   const fetchCategoryData = async () => {
     try {
-      const response = await fetch(`${API_BASE}/category/${id}`);
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await fetch(`${API_BASE}/category/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
       if (data.success) {
         setFormData({
@@ -49,29 +55,31 @@ function AddCatagory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      alert("Unauthorized: Please log in.");
+      return;
+    }
     try {
-      const url = isEdit
-        ? `${API_BASE}/category/${id}`
-        : `${API_BASE}/category`;
+      const url = isEdit ? `${API_BASE}/category/${id}` : `${API_BASE}/category`;
       const method = isEdit ? "PUT" : "POST";
-
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
-      console.log("Response:", data);
-
-      if (data.success) {
-        navigate("/category");
+      if (!response.ok || !data.success) {
+        alert(data.message || (isEdit ? "Update failed." : "Create failed."));
+        return;
       }
+      navigate("/category");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      alert(isEdit ? "Error updating category." : "Error creating category.");
+      console.error("Submit error:", error);
     }
   };
 

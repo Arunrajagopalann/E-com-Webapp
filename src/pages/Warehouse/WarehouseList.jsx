@@ -1,48 +1,72 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Warehouse.css"; // Import the CSS
+const API_BASE = process.env.REACT_APP_BASE_URL;
 
 function WarehouseList() {
-  const [warehouseList, setWarehouse] = React.useState([]);
-  const API_BASE = "http://localhost:8001/api/v1";
+  const [warehouseList, setWarehouseList] = useState([]);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    fetchWarehouse();
+  // Get token
+  const accessToken = localStorage.getItem("accessToken");
+
+  // Fetch all warehouses
+  useEffect(() => {
+    fetchWarehouses();
   }, []);
 
-  const fetchWarehouse = async () => {
+  const fetchWarehouses = async () => {
     try {
       const response = await fetch(`${API_BASE}/warehouse`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
-      console.log("response", response);
       const data = await response.json();
-      setWarehouse(data.data);
+      if (data.success) setWarehouseList(data.data);
+      else setWarehouseList([]);
     } catch (error) {
       console.error("Fetch Warehouse Error:", error);
     }
   };
+
+  // Delete warehouse
   const deleteWarehouse = async (_id) => {
+    if (!accessToken) {
+      alert("Unauthorized: Please log in.");
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE}/warehouse/${_id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
-      console.log("response", response);
-
       const data = await response.json();
-      fetchWarehouse();
+      if (!response.ok || !data.success) {
+        alert(data.message || "Delete failed.");
+        return;
+      }
+      fetchWarehouses();
     } catch (error) {
+      alert("Error deleting warehouse.");
       console.error("Delete Warehouse Error:", error);
     }
   };
+
+  // Navigation helpers (for edit/add)
+  const handleEdit = (id) => navigate(`/warehouse/add?id=${id}&type=edit`);
+  const handleAdd = () => navigate("/warehouse/add?type=add");
+
   return (
     <div className="warehouse-container">
       <div className="warehouse-header">
         <h1 className="warehouse-title">Warehouse Management</h1>
-        <button className="btn-add" onClick={() => navigate("/addWarehouse")}>
+        <button className="btn-add" onClick={handleAdd}>
           Add Warehouse
         </button>
       </div>
@@ -84,9 +108,7 @@ function WarehouseList() {
                 <td className="action-buttons">
                   <button
                     className="btn-edit"
-                    onClick={() =>
-                      navigate(`/addWarehouse?type=edit&id=${warehouse._id}`)
-                    }
+                    onClick={() => handleEdit(warehouse._id)}
                   >
                     Edit
                   </button>

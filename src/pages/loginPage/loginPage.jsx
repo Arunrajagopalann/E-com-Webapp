@@ -32,7 +32,7 @@ const LoginSignup = () => {
     setSigninData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const API_BASE = "http://localhost:8001/api/v1";
+  const API_BASE = process.env.REACT_APP_BASE_URL
 
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
@@ -43,8 +43,13 @@ const LoginSignup = () => {
         body: JSON.stringify(signinData),
       });
       const data = await response.json();
-      navigate("/dashboard");
-      console.log("Login response:", data);
+      if(data.statusCode == 200){
+        localStorage.setItem("accessToken", data.data.accessToken);
+        localStorage.setItem("refreshToken", data.data.refreshToken);
+        navigate("/brand");  //Except GET
+      }else{
+        alert(data.message);
+      }
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -59,7 +64,6 @@ const LoginSignup = () => {
         body: JSON.stringify(signupData),
       });
       const data = await response.json();
-      console.log("Signup response:", data);
     } catch (error) {
       console.error("Signup error:", error);
     }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Product.css";
 
@@ -8,39 +8,35 @@ function AddProduct() {
   const id = searchParams.get("id");
   const type = searchParams.get("type");
   const isEdit = type === "edit";
-
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const accessToken = localStorage.getItem("accessToken");
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     salePrice: "",
-    categoryId: "",
-    brandId: "",
+    category: "",  // Changed from categoryId
+    brand: "",     // Changed from brandId
     stock: "",
     sku: "",
     images: [],
     featured: false,
     status: "ACTIVE",
   });
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
-  const API_BASE = "http://localhost:8001/api/v1";
+  const API_BASE = process.env.REACT_APP_BASE_URL;
 
-  useEffect(() => {
-    // Fetch categories and brands for dropdowns
-    fetchCategories();
-    fetchBrands();
-
-    if (isEdit && id) {
-      fetchProductData();
-    }
-  }, [isEdit, id]);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/category`);
+      const response = await fetch(`${API_BASE}/category`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
       if (data.success) {
         setCategories(data.data);
@@ -48,11 +44,17 @@ function AddProduct() {
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
-  };
+  }, [API_BASE, accessToken]);
 
-  const fetchBrands = async () => {
+  const fetchBrands = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/brand`);
+      const response = await fetch(`${API_BASE}/brand`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
       if (data.success) {
         setBrands(data.data);
@@ -60,80 +62,101 @@ function AddProduct() {
     } catch (error) {
       console.error("Error fetching brands:", error);
     }
-  };
+  }, [API_BASE, accessToken]);
 
-  const fetchProductData = async () => {
+  const fetchProductData = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/products/${id}`);
+      const response = await fetch(`${API_BASE}/products/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
-      if (data.success) {
-        setFormData(data.data);
+      if (data.statusCode === 200) {
+        setFormData({
+          ...formData,
+          ...data.data,
+        });
       }
     } catch (error) {
       console.error("Error fetching product:", error);
     }
-  };
+  }, [API_BASE, accessToken, id]);
+
+  useEffect(() => {
+    // Fetch categories and brands on component mount
+    fetchCategories();
+    fetchBrands();
+  }, [fetchCategories, fetchBrands]);
+  
+  // Separate useEffect for edit functionality
+  useEffect(() => {
+    if (isEdit && id) {
+      fetchProductData();
+    }
+  }, [isEdit, id, fetchProductData]);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type: inputType, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: inputType === "checkbox" ? checked : value,
     });
   };
 
   const handleImageUpload = (e) => {
-    // For demo purposes, just store the file names
-    // In a real app, you would upload these to a server or cloud storage
     const files = Array.from(e.target.files);
-    setFormData({
-      ...formData,
-      images: [...formData.images, ...files.map((file) => file.name)],
-    });
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...files.map((file) => URL.createObjectURL(file))],
+    }));
   };
 
   const removeImage = (index) => {
-    const updatedImages = [...formData.images];
-    updatedImages.splice(index, 1);
-    setFormData({
-      ...formData,
-      images: updatedImages,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!accessToken) {
+      alert("Unauthorized: Please log in.");
+      return;
+    }
     try {
       const url = isEdit ? `${API_BASE}/products/${id}` : `${API_BASE}/products`;
       const method = isEdit ? "PUT" : "POST";
-
-      // In a real app, you'd handle file uploads properly
-      // This is just a simplified example
       const productData = {
         ...formData,
-        // Convert string values to numbers
         price: parseFloat(formData.price),
         salePrice: formData.salePrice ? parseFloat(formData.salePrice) : null,
         stock: parseInt(formData.stock, 10),
+        // No need to rename fields here anymore since we're using brand and category directly
       };
-
+      
+      
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(productData),
       });
-
       const data = await response.json();
-      console.log("Response:", data);
-
-      if (data.success) {
-        navigate("/product");
+      
+      if (!response.ok || !data.success) {
+        alert(data.message || (isEdit ? "Update failed." : "Create failed."));
+        return;
       }
+      navigate("/product");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      alert(isEdit ? "Error updating product." : "Error creating product.");
+      console.error("Submit error:", error);
     }
   };
 
@@ -188,11 +211,11 @@ function AddProduct() {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="categoryId">Category*</label>
+            <label htmlFor="category">Category*</label>  {/* Changed from categoryId */}
             <select
-              id="categoryId"
-              name="categoryId"
-              value={formData.categoryId}
+              id="category"
+              name="category"
+              value={formData.category}
               onChange={handleInputChange}
               required
             >
@@ -206,11 +229,11 @@ function AddProduct() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="brandId">Brand*</label>
+            <label htmlFor="brand">Brand*</label> 
             <select
-              id="brandId"
-              name="brandId"
-              value={formData.brandId}
+              id="brand"
+              name="brand"  /* Changed from brandId */
+              value={formData.brand}  /* Changed from brandId */
               onChange={handleInputChange}
               required
             >
