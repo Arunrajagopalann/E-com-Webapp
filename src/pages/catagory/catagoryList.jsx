@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Category.css"; // Import the CSS
+import "./Category.css";
 
 function CatagoryList() {
   const [categories, setCategories] = React.useState([]);

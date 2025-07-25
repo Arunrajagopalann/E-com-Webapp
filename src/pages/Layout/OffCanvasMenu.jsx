@@ -23,7 +23,7 @@ const OffCanvasMenu = () => {
     const pathname = location.pathname;
     if (pathname.startsWith("/dashboard")) {
       setTitle("Dashboard");
-    } else if (pathname.startsWith("/brand")) {
+    } else if (pathname.startsWith("/brand") || pathname.startsWith("/addBrand")) {
       setTitle("Brand");
     } else if (pathname.startsWith("/category")) {
       setTitle("Category");
@@ -412,7 +412,7 @@ const OffCanvasMenu = () => {
                   <li>
                     <a
                       className="dropdown-item d-flex align-items-center gap-2"
-                      href="/"
+                      href="/login" onClick={() => {localStorage.removeItem("accessToken");}} 
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

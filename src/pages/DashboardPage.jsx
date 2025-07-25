@@ -4,6 +4,7 @@ import "./Dashboard.css";
 import ApiDebugger from "../components/ApiDebugger";
 
 const Dashboard = () => {
+  const accessToken = localStorage.getItem("accessToken");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
@@ -84,7 +85,12 @@ const Dashboard = () => {
         // Test each endpoint
         for (const endpoint of endpoints) {
           try {
-            const response = await fetch(endpoint, { method: "HEAD" });
+            const response = await fetch(endpoint, { method: "HEAD",
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+              }
+             });
             if (response) {
               console.log(
                 `API endpoint ${endpoint} is reachable with status: ${response.status}`
@@ -188,7 +194,14 @@ const Dashboard = () => {
         // Create an array to hold all API fetch promises
         const promises = [
           // Try to fetch real data first, fallback to mock data if errors occur
-          fetch(CORRECT_API_PATHS.products)
+          fetch(CORRECT_API_PATHS.products,{
+             method: 'GET',
+             headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }
+          )
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Products API error: ${response.status}`);
@@ -209,7 +222,15 @@ const Dashboard = () => {
             }),
 
           // Fetch categories
-          fetch(CORRECT_API_PATHS.categories)
+          fetch(CORRECT_API_PATHS.categories,
+            {
+             method: 'GET',
+             headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }
+          )
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Categories API error: ${response.status}`);
@@ -230,7 +251,15 @@ const Dashboard = () => {
             }),
 
           // Fetch brands
-          fetch(CORRECT_API_PATHS.brands)
+          fetch(CORRECT_API_PATHS.brands,
+            {
+             method: 'GET',
+             headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }
+          )
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Brands API error: ${response.status}`);
@@ -251,7 +280,15 @@ const Dashboard = () => {
             }),
 
           // Fetch warehouses
-          fetch(CORRECT_API_PATHS.warehouses)
+          fetch(CORRECT_API_PATHS.warehouses,
+            {
+             method: 'GET',
+             headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }
+          )
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Warehouses API error: ${response.status}`);
@@ -678,19 +715,19 @@ const Dashboard = () => {
             ) : products.length === 0 ? (
               <div className="no-data">
                 No products found. Add products to see them here.
-              </div>
+        </div>
             ) : (
-              <table>
-                <thead>
-                  <tr>
+        <table>
+          <thead>
+            <tr>
                     <th>Product Name</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Status</th>
                     
-                  </tr>
-                </thead>
-                <tbody>
+            </tr>
+          </thead>
+          <tbody>
                   {products.slice(0, 4).map((product, index) => (
                     <tr key={product._id || index}>
                       <td>{product.name}</td>
@@ -712,10 +749,10 @@ const Dashboard = () => {
                         </span>
                       </td>
                      
-                    </tr>
+            </tr>
                   ))}
-                </tbody>
-              </table>
+          </tbody>
+        </table>
             )}
 
             <div className="view-more">

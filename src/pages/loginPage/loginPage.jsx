@@ -43,7 +43,7 @@ const LoginSignup = () => {
         body: JSON.stringify(signinData),
       });
       const data = await response.json();
-      if(data.statusCode == 200){
+      if(data.statusCode === 200){
         localStorage.setItem("accessToken", data.data.accessToken);
         localStorage.setItem("refreshToken", data.data.refreshToken);
         navigate("/dashboard");  //Except GET
@@ -63,7 +63,7 @@ const LoginSignup = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signupData),
       });
-      const data = await response.json();
+      await response.json();
     } catch (error) {
       console.error("Signup error:", error);
     }

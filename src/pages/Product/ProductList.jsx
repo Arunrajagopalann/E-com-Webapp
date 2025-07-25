@@ -89,7 +89,7 @@ function ProductList() {
               <tr key={product._id || index}>
                 <td>{index + 1}</td>
                 <td>{product.name}</td>
-                <td className="product-price">${product.price}</td>
+                <td className="product-price">₹{product.price}</td>
                 <td>{product.seller}</td>
                 <td>
                   <span
