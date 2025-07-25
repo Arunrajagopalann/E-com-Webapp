@@ -46,7 +46,7 @@ const LoginSignup = () => {
       if(data.statusCode == 200){
         localStorage.setItem("accessToken", data.data.accessToken);
         localStorage.setItem("refreshToken", data.data.refreshToken);
-        navigate("/brand");  //Except GET
+        navigate("/dashboard");  //Except GET
       }else{
         alert(data.message);
       }
