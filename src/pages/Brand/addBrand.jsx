@@ -112,13 +112,11 @@ function AddBrand() {
 
       console.log("API Response:", result);
 
-      if (result.success) {
+      if (result.stausCode == 200) {
         // Add the pending navigation here too
         setPendingNavigation(true);
         showToast(
-          isEdit
-            ? "Brand updated successfully!"
-            : "Brand created successfully!",
+         result.message,
           "success"
         );
         // Remove any direct navigation that might be here
@@ -127,7 +125,7 @@ function AddBrand() {
         setError(result.message || "Operation failed");
         setPendingNavigation(true); // Set pending navigation flag
         showToast(
-          `${isEdit ? "Update" : "Create"} failed: ${result.message || "Unknown error"}`
+          ` ${result.message || "Unknown error"}`
         );
       }
     } catch (error) {

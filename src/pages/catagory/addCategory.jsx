@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Category.css";
+import ToastMessage from "../../components/ToastMessage";
 
 function AddCatagory() {
+  const [pendingNavigation, setPendingNavigation] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    variant: "success",
+  });
+
+  const showToast = (msg, variant = "success") => {
+    console.log("Showing toast:", msg);
+    setToast({ show: true, message: msg, variant });
+    setTimeout(() => {
+      navigate("/category");
+    }, 1000);
+  };
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
@@ -15,7 +32,7 @@ function AddCatagory() {
     status: "Active",
   });
 
-  const API_BASE = process.env.REACT_APP_BASE_URL
+  const API_BASE = process.env.REACT_APP_BASE_URL;
   useEffect(() => {
     if (isEdit && id) {
       fetchCategoryData();
@@ -33,7 +50,7 @@ function AddCatagory() {
         },
       });
       const data = await response.json();
-      if (data.success) {
+      if (data.statusCode == 200) {
         setFormData({
           categoryName: data.data.categoryName || "",
           description: data.data.description || "",
@@ -61,7 +78,9 @@ function AddCatagory() {
       return;
     }
     try {
-      const url = isEdit ? `${API_BASE}/category/${id}` : `${API_BASE}/category`;
+      const url = isEdit
+        ? `${API_BASE}/category/${id}`
+        : `${API_BASE}/category`;
       const method = isEdit ? "PUT" : "POST";
       const response = await fetch(url, {
         method,
@@ -71,12 +90,18 @@ function AddCatagory() {
         },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        alert(data.message || (isEdit ? "Update failed." : "Create failed."));
-        return;
+      const result = await response.json();
+      if (result.statusCode == 200) {
+        // Add the pending navigation here too
+        setPendingNavigation(true);
+        showToast(result.message, "success");
+        // Remove any direct navigation that might be here
+        // Do NOT call navigate("/brand") here
+      } else {
+        setError(result.message || "Operation failed");
+        setPendingNavigation(true); // Set pending navigation flag
+        showToast(` ${result.message || "Unknown error"}`);
       }
-      navigate("/category");
     } catch (error) {
       alert(isEdit ? "Error updating category." : "Error creating category.");
       console.error("Submit error:", error);
@@ -144,6 +169,21 @@ function AddCatagory() {
           </button>
         </div>
       </form>
+      <ToastMessage
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => {
+          console.log("Toast closing");
+          // setToast({ ...toast, show: false });
+
+          if (pendingNavigation) {
+            console.log("Navigating after toast closed");
+            setPendingNavigation(false);
+            navigate("/warehouse");
+          }
+        }}
+      />
     </div>
   );
 }

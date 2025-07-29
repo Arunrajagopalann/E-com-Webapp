@@ -3,8 +3,38 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./OffCanvasMenu.css";
 import { Outlet, Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import "./Dashboard.css";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line, Bar, Pie } from "react-chartjs-2";
+import DashboardCharts from "../Layout/DashboardCharts";
 
-const OffCanvasMenu = () => {
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const Dashboard = () => {
+  const [dashboardStats, setDashboardStats] = useState(null);
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [title, setTitle] = useState("");
 
@@ -15,21 +45,17 @@ const OffCanvasMenu = () => {
     setIsCollapsed((prev) => !prev);
   };
 
-  useEffect(() => {
-    handleSetTitle();
-  }, [location.pathname]);
-
-  const handleSetTitle = () => {
+   const handleSetTitle = () => {
     const pathname = location.pathname;
     if (pathname.startsWith("/dashboard")) {
       setTitle("Dashboard");
     } else if (pathname.startsWith("/brand") || pathname.startsWith("/addBrand")) {
       setTitle("Brand");
-    } else if (pathname.startsWith("/category")) {
+    } else if (pathname.startsWith("/category") || pathname.startsWith("/addCategory")) {
       setTitle("Category");
-    } else if (pathname.startsWith("/product")) {
+    } else if (pathname.startsWith("/product") || pathname.startsWith("/addProduct")) {
       setTitle("Product");
-    } else if (pathname.startsWith("/warehouse")) {
+    } else if (pathname.startsWith("/warehouse") || pathname.startsWith("/addWarehouse")) {
       setTitle("Warehouse");
     } else if (
       pathname === "/" ||
@@ -41,6 +67,37 @@ const OffCanvasMenu = () => {
       setTitle("Page Not Found");
     }
   };
+    useEffect(() => {
+    handleSetTitle();
+  }, [location.pathname]);
+
+  // Mock fetch function to simulate getting dashboard stats
+  useEffect(() => {
+    const fetchData = async () => {
+      // Simulate an API call
+      const data = {
+        salesOverview: [1200, 1900, 1500, 2400, 2700, 1700],
+        topProducts: [
+          "Product A",
+          "Product B",
+          "Product C",
+          "Product D",
+          "Product E",
+        ],
+        salesByCategory: [25, 40, 15, 20],
+        customerInsights: [63, 25, 12],
+      };
+      setDashboardStats(data);
+    };
+
+    fetchData();
+  }, []);
+
+  if (!dashboardStats) {
+    return <div>Loading...</div>;
+  }
+
+  
   const menuItems = [
     {
       name: "Dashboard",
@@ -154,7 +211,14 @@ const OffCanvasMenu = () => {
   ];
 
   return (
-    <div className="d-flex" id="wrapper">
+    <>
+     {/* <div className="dashboard">
+      <h1>Dashboard</h1>
+       <DashboardCharts dashboardStats={dashboardStats} />
+      <Outlet />
+     </div> */}
+
+     <div className="d-flex" id="wrapper">
       <div
         className={`border-end ${isCollapsed ? "collapsed" : ""}`}
         id="sidebar-wrapper"
@@ -439,7 +503,9 @@ const OffCanvasMenu = () => {
         </div>
       </div>
     </div>
+    </>
+
   );
 };
 
-export default OffCanvasMenu;
+export default Dashboard;

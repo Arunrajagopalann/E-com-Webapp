@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getBrands, deleteBrand } from "../../services/api.service";
+import { deleteBrand } from "../../services/api.service";
 import "./Brand.css"; // Create this file with the styles below
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ToastMessage from "../../components/ToastMessage";
 import Swal from "sweetalert2";
+const API_BASE = process.env.REACT_APP_BASE_URL;
 function BrandList() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalBrands, setTotalBrands] = useState(0);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -23,34 +26,54 @@ function BrandList() {
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [allBrands, setAllBrands] = useState([]); // Add this missing state // Add this missing state
+  const itemsPerPage = 3;
+  const accessToken = localStorage.getItem("accessToken");
+  const totalPages = Math.ceil(totalBrands / itemsPerPage);
   const [pendingNavigation, setPendingNavigation] = useState(false); // Add pending navigation state
+  const updateDisplayBrands = (brands, page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, brands.length);
+    console.log(`Displaying brands from index ${startIndex} to ${endIndex}`);
+    setBrandList(brands.slice(startIndex, endIndex));
+  };
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (allBrands.length > 0) {
+      updateDisplayBrands(allBrands, currentPage);
+    }
+  }, [currentPage, allBrands]);
+
   const fetchBrands = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const result = await getBrands();
-      if (result.statusCode === 200) {
-        setBrandList(result.data);
+      setLoading(true);
+
+      const response = await fetch(`${API_BASE}/brand`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Fix if/else structure with proper curly braces
+      if (response.status === 200) {
+        setAllBrands(data.data);
+        setTotalBrands(data.data.length);
+        updateDisplayBrands(data.data, currentPage);
       } else {
-        setError(result.message || "Failed to fetch brands");
         setBrandList([]);
+        setAllBrands([]);
+        setTotalBrands(0);
       }
     } catch (error) {
-      console.error("Fetch brands error:", error);
-      setError(error.message || "An error occurred while fetching brands");
-      setBrandList([]);
+      console.error("Fetch Brand Error:", error);
     } finally {
       setLoading(false);
     }
   };
-  console.log("Fetching brandList...", brandList);
-
-  React.useEffect(() => {
-    console.log("Fetching brands...");
-    fetchBrands();
-  }, []);
 
   const handleDeleteBrand = async (id) => {
     Swal.fire({
@@ -72,14 +95,13 @@ function BrandList() {
               }
             });
           } else {
-             Swal.fire({
-              title: result.message ,
+            Swal.fire({
+              title: result.message,
               icon: "error",
-            })
+            });
           }
         } catch (error) {
           console.error("Delete brand error:", error);
-          showToast(`Error deleting brand: ${error.message}`, "error");
         } finally {
           setLoading(false);
         }
@@ -88,6 +110,10 @@ function BrandList() {
       }
     });
   };
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
 
   return (
     <div className="brand-container">
@@ -156,6 +182,54 @@ function BrandList() {
             </tbody>
           </table>
         )}
+        <div>
+          <nav aria-label="Page navigation example">
+            <ul className="pagination justify-content-end">
+              {/* Previous Button */}
+              <li
+                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                >
+                  &laquo;
+                </button>
+              </li>
+
+              {/* Dynamic Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li
+                  key={i + 1}
+                  className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+
+              {/* Next Button */}
+              <li
+                className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
       <ToastMessage
         show={toast.show}

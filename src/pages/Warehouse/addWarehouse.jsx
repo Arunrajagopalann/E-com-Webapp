@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Warehouse.css";
+import ToastMessage from "../../components/ToastMessage";
 
 function AddWarehouse() {
+  const [pendingNavigation, setPendingNavigation] = useState(false);
+    const [error, setError] = useState(null);
+  
+    const [toast, setToast] = useState({
+      show: false,
+      message: "",
+      variant: "success",
+    });
+  
+    const showToast = (msg, variant = "success") => {
+      console.log("Showing toast:", msg);
+      setToast({ show: true, message: msg, variant });
+      setTimeout(() => {
+        navigate("/warehouse");
+      }, 1000);
+    };
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
@@ -96,13 +113,19 @@ function AddWarehouse() {
         },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        alert(data.message || (isEdit ? "Update failed." : "Create failed."));
-        return;
+      const result = await response.json();
+       if (result.statusCode == 200) {
+        // Add the pending navigation here too
+        setPendingNavigation(true);
+        showToast(result.message, "success");
+        // Remove any direct navigation that might be here
+        // Do NOT call navigate("/brand") here
+      } else {
+        setError(result.message || "Operation failed");
+        setPendingNavigation(true); // Set pending navigation flag
+        showToast(` ${result.message || "Unknown error"}`);
       }
-      navigate("/warehouse");
-    } catch (error) {
+       } catch (error) {
       alert(isEdit ? "Error updating warehouse." : "Error creating warehouse.");
       console.error("Submit error:", error);
     }
@@ -139,6 +162,7 @@ function AddWarehouse() {
               name="warehouseType"
               value={formData.warehouseType}
               onChange={handleInputChange}
+              required
             >
               <option value="PRIMARY">Primary</option>
               <option value="SECONDARY">Secondary</option>
@@ -275,7 +299,6 @@ function AddWarehouse() {
                 value={formData.address[0].zipCode}
                 onChange={(e) => handleAddressChange(e, 0)}
                 placeholder="ZIP or postal code"
-                required
               />
             </div>
 
@@ -307,6 +330,22 @@ function AddWarehouse() {
           </button>
         </div>
       </form>
+      <ToastMessage
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => {
+          console.log("Toast closing");
+          // setToast({ ...toast, show: false });
+
+          if (pendingNavigation) {
+            console.log("Navigating after toast closed");
+            setPendingNavigation(false);
+            navigate("/warehouse");
+          }
+           
+        }}
+      />
     </div>
   );
 }

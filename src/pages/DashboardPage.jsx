@@ -1,12 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Dashboard.css";
-import ApiDebugger from "../components/ApiDebugger";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line, Bar, Pie } from "react-chartjs-2";
+import DashboardCharts from "../pages/Layout/DashboardCharts";
+
+// Register Chart.js components once
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
   const accessToken = localStorage.getItem("accessToken");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   // Dashboard stats
@@ -14,7 +41,7 @@ const Dashboard = () => {
     totalProducts: 0,
     totalCategories: 0,
     totalBrands: 0,
-    totalWarehouses: 0, // Changed from featuredProducts to totalWarehouses
+    totalWarehouses: 0,
   });
 
   // Add effect to monitor dashboardStats changes
@@ -28,9 +55,18 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   // API Base URL - make sure this is correct
-  const API_BASE = "http://localhost:8001/api/v1";
+  const API_BASE = process.env.REACT_APP_BASE_URL;
   const isDev = process.env.NODE_ENV !== "production";
   console.log("Using API base URL:", API_BASE);
+
+  // Set page title based on current route
+  const handleSetTitle = () => {
+    document.title = "Dashboard | E-com Admin";
+  };
+
+  useEffect(() => {
+    handleSetTitle();
+  }, [location.pathname]);
 
   // Development helper function to display API response structure
   const debugApiResponse = (label, data) => {
@@ -58,15 +94,14 @@ const Dashboard = () => {
   };
 
   // Backend API paths - based on code analysis from the actual backend
-  // The backend uses /products (plural) not /product (singular)
   const CORRECT_API_PATHS = {
     products: `${API_BASE}/products`,
     categories: `${API_BASE}/category`,
     brands: `${API_BASE}/brand`,
-    warehouses: `${API_BASE}/warehouse`, // Added warehouse endpoint
+    warehouses: `${API_BASE}/warehouse`,
   };
 
-  // Check if API is available by trying different endpoints
+  // Check if API is available
   useEffect(() => {
     const checkApiAvailability = async () => {
       try {
@@ -85,12 +120,13 @@ const Dashboard = () => {
         // Test each endpoint
         for (const endpoint of endpoints) {
           try {
-            const response = await fetch(endpoint, { method: "HEAD",
+            const response = await fetch(endpoint, {
+              method: "HEAD",
               headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
-              }
-             });
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
             if (response) {
               console.log(
                 `API endpoint ${endpoint} is reachable with status: ${response.status}`
@@ -194,14 +230,13 @@ const Dashboard = () => {
         // Create an array to hold all API fetch promises
         const promises = [
           // Try to fetch real data first, fallback to mock data if errors occur
-          fetch(CORRECT_API_PATHS.products,{
-             method: 'GET',
-             headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      }
-    }
-          )
+          fetch(CORRECT_API_PATHS.products, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Products API error: ${response.status}`);
@@ -222,15 +257,13 @@ const Dashboard = () => {
             }),
 
           // Fetch categories
-          fetch(CORRECT_API_PATHS.categories,
-            {
-             method: 'GET',
-             headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      }
-    }
-          )
+          fetch(CORRECT_API_PATHS.categories, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Categories API error: ${response.status}`);
@@ -251,15 +284,13 @@ const Dashboard = () => {
             }),
 
           // Fetch brands
-          fetch(CORRECT_API_PATHS.brands,
-            {
-             method: 'GET',
-             headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      }
-    }
-          )
+          fetch(CORRECT_API_PATHS.brands, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Brands API error: ${response.status}`);
@@ -280,15 +311,13 @@ const Dashboard = () => {
             }),
 
           // Fetch warehouses
-          fetch(CORRECT_API_PATHS.warehouses,
-            {
-             method: 'GET',
-             headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      }
-    }
-          )
+          fetch(CORRECT_API_PATHS.warehouses, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`Warehouses API error: ${response.status}`);
@@ -638,12 +667,38 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // Merge mock data fetch from the second Dashboard component
+  useEffect(() => {
+    const fetchMockData = async () => {
+      // Simulate an API call when real data isn't available
+      const data = {
+        salesOverview: [1200, 1900, 1500, 2400, 2700, 1700],
+        topProducts: [
+          "Product A",
+          "Product B",
+          "Product C",
+          "Product D",
+          "Product E",
+        ],
+        salesByCategory: [25, 40, 15, 20],
+        customerInsights: [63, 25, 12],
+      };
+      // Use this data if the real API call fails
+      if (
+        !dashboardStats ||
+        Object.values(dashboardStats).every((val) => val === 0)
+      ) {
+        setDashboardStats(data);
+      }
+    };
+
+    fetchMockData();
+  }, [dashboardStats]);
+
   return (
     <div className="dashboard-container">
       {/* Main Content */}
       <div className="dashboard-main">
-        {/* Header */}
-
         {/* Content */}
         <div className="dashboard-content">
           {error && (
@@ -715,19 +770,18 @@ const Dashboard = () => {
             ) : products.length === 0 ? (
               <div className="no-data">
                 No products found. Add products to see them here.
-        </div>
+              </div>
             ) : (
-        <table>
-          <thead>
-            <tr>
+              <table>
+                <thead>
+                  <tr>
                     <th>Product Name</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Status</th>
-                    
-            </tr>
-          </thead>
-          <tbody>
+                  </tr>
+                </thead>
+                <tbody>
                   {products.slice(0, 4).map((product, index) => (
                     <tr key={product._id || index}>
                       <td>{product.name}</td>
@@ -748,11 +802,10 @@ const Dashboard = () => {
                           {product.status || "INACTIVE"}
                         </span>
                       </td>
-                     
-            </tr>
+                    </tr>
                   ))}
-          </tbody>
-        </table>
+                </tbody>
+              </table>
             )}
 
             <div className="view-more">
@@ -764,11 +817,14 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
+
+          {/* Charts Section */}
+          <div className="dashboard">
+            <h1>Dashboard Charts</h1>
+            <DashboardCharts dashboardStats={dashboardStats} />
+          </div>
         </div>
       </div>
-
-      {/* API Debugger */}
-      {/* <ApiDebugger baseUrl="http://localhost:8001" /> */}
     </div>
   );
 };

@@ -114,8 +114,8 @@ const LoginSignup = () => {
               <option value="">Select Role</option>
               <option value="User">User</option>
               <option value="Admin">Admin</option>
-              <option value="manager">Manager</option>
-              <option value="guest">Guest</option>
+              <option value="Super_Admin">Super Admin</option>
+              {/* <option value="guest">Guest</option> */}
             </select>
             <button onClick={handleSignUpSubmit}>Sign Up</button>
           </div>

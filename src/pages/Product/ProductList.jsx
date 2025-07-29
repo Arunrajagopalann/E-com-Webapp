@@ -1,62 +1,131 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Product.css"; // Import the CSS
+import ToastMessage from "../../components/ToastMessage";
+import Swal from "sweetalert2";
+import "bootstrap/dist/css/bootstrap.min.css";
 const API_BASE = process.env.REACT_APP_BASE_URL;
 
 function ProductList() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const itemsPerPage = 3;
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    variant: "success",
+  });
+
+  const showToast = (msg, variant = "success") => {
+    console.log("Showing toast:", msg);
+    setToast({ show: true, message: msg, variant });
+    setTimeout(() => {
+      navigate("/product");
+    }, 500);
+  };
+  const [pendingNavigation, setPendingNavigation] = useState(false); // Add pending navigation
   const [productList, setProductList] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Add this state variable for storing all products
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   // Get token
   const accessToken = localStorage.getItem("accessToken");
 
   // Fetch all products
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
+    fetchProducts(currentPage);
+  }, [currentPage]);
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_BASE}/products`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      setLoading(true);
+
+      const response = await fetch(
+        `${API_BASE}/products`, // Remove pagination parameters
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
       const data = await response.json();
-      console.log("data", data);
-      if (data.success) setProductList(data.data);
-      else setProductList([]);
+      console.log("All products data:", data);
+
+      if (response.status === 200) {
+        // Store all products
+        setAllProducts(data.data);
+        // Set total count
+        setTotalProducts(data.data.length);
+        // Update displayed products based on current page
+        updateDisplayedProducts(data.data, currentPage);
+      } else {
+        setProductList([]);
+        setAllProducts([]);
+        setTotalProducts(0);
+      }
     } catch (error) {
       console.error("Fetch Product Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Function to handle client-side pagination
+  const updateDisplayedProducts = (products, page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, products.length);
+    console.log(`Displaying products from index ${startIndex} to ${endIndex}`);
+    setProductList(products.slice(startIndex, endIndex));
+  };
+
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
   // Delete product
-  const deleteProduct = async (_id) => {
-    if (!accessToken) {
-      alert("Unauthorized: Please log in.");
-      return;
-    }
-    try {
-      const response = await fetch(`${API_BASE}/products/${_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        alert(data.message || "Delete failed.");
-        return;
+  const deleteProduct = async (id) => {
+    Swal.fire({
+      title: "Do you want to delete this?",
+      showCancelButton: true,
+      confirmButtonText: "Ok",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${API_BASE}/products/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          const result = await response.json();
+
+          if (result.statusCode === 200) {
+            Swal.fire({
+              title: result.message || "Product deleted successfully",
+              icon: "success",
+            }).then(async (result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                fetchProducts();
+              }
+            });
+          } else {
+            Swal.fire({
+              title: result.message,
+              icon: "error",
+            });
+          }
+        } catch (error) {
+          console.error("Delete product error:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info");
       }
-      fetchProducts();
-    } catch (error) {
-      alert("Error deleting product.");
-      console.error("Delete Product Error:", error);
-    }
+    });
   };
 
   // Navigation helpers (for edit/add)
@@ -118,7 +187,70 @@ function ProductList() {
             ))}
           </tbody>
         </table>
+        <div>
+          <nav aria-label="Page navigation example">
+            <ul className="pagination justify-content-end">
+              {/* Previous Button */}
+              <li
+                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                >
+                  &laquo;
+                </button>
+              </li>
+
+              {/* Dynamic Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li
+                  key={i + 1}
+                  className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+
+              {/* Next Button */}
+              <li
+                className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
+      <ToastMessage
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => {
+          console.log("Toast closing");
+          // setToast({ ...toast, show: false });
+
+          if (pendingNavigation) {
+            console.log("Navigating after toast closed");
+            setPendingNavigation(false);
+            navigate("/product");
+          }
+        }}
+      />
     </div>
   );
 }
