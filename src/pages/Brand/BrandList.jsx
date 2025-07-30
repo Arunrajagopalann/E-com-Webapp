@@ -147,16 +147,16 @@ function BrandList() {
               {brandList.length > 0 ? (
                 brandList.map((brand, index) => (
                   <tr key={brand._id || index}>
-                    <td>{index + 1}</td>
-                    <td>{brand.brandName}</td>
-                    <td>
+                    <td data-label="S.No">{index + 1}</td>
+                    <td data-label="Brand Name">{brand.brandName}</td>
+                    <td data-label="Status">
                       <span
                         className={`status-badge ${brand.status === "Active" ? "active" : "inactive"}`}
                       >
                         {brand.status}
                       </span>
                     </td>
-                    <td className="action-buttons">
+                    <td data-label="Actions" className="action-buttons">
                       <button
                         className="btn-edit"
                         onClick={() =>

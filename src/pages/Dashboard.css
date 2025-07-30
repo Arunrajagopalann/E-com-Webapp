@@ -4,14 +4,38 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   font-family: Arial, sans-serif;
+  flex-direction: column;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Ensure proper spacing from sidebar */
+@media (min-width: 992px) {
+  .dashboard-container {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard-container {
+    flex-direction: row;
+  }
 }
 
 /* Sidebar Styles */
 .dashboard-sidebar {
-  width: 220px;
+  width: 100%;
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   z-index: 10;
+  order: -1;
+}
+
+@media (min-width: 768px) {
+  .dashboard-sidebar {
+    width: 220px;
+    order: 0;
+  }
 }
 
 .sidebar-logo {
@@ -127,20 +151,110 @@
 .dashboard-content {
   padding: 30px;
   flex: 1;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Desktop Layout Improvements */
+@media (min-width: 1200px) {
+  .dashboard-content {
+    padding: 50px 80px;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1400px) {
+  .dashboard-content {
+    padding: 60px 100px;
+    margin-left: 0;
+  }
+}
+
+/* Ensure content doesn't interfere with sidebar */
+@media (min-width: 992px) {
+  .dashboard-content {
+    margin-left: 0;
+    padding-left: 40px;
+  }
 }
 
 .section-title {
   font-size: 24px;
-  color: #333;
+  color: white;
   margin-bottom: 20px;
+  margin-top: 0;
+  padding: 20px 30px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to right, #667eea, #5fc3e4);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(95, 195, 228, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Desktop Section Title Improvements */
+@media (min-width: 1200px) {
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    padding: 30px 40px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .section-title {
+    font-size: 32px;
+    margin-bottom: 40px;
+    padding: 40px 50px;
+  }
 }
 
 /* Overview Cards */
 .overview-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* Desktop Overview Cards Improvements */
+@media (min-width: 1200px) {
+  .overview-cards {
+    gap: 30px;
+    margin-bottom: 40px;
+    margin-top: 30px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .overview-cards {
+    gap: 40px;
+    margin-bottom: 50px;
+    margin-top: 40px;
+  }
+}
+
+@media (min-width: 576px) {
+  .overview-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .overview-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 992px) {
+  .overview-cards {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
 }
 
 .card {
@@ -158,6 +272,19 @@
 .card-body {
   padding: 20px;
   position: relative;
+}
+
+/* Desktop Card Improvements */
+@media (min-width: 1200px) {
+  .card-body {
+    padding: 30px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .card-body {
+    padding: 40px;
+  }
 }
 
 .card-title {
@@ -186,6 +313,20 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   overflow: hidden;
+  margin-top: 30px;
+}
+
+/* Desktop Table Improvements */
+@media (min-width: 1200px) {
+  .declarations-table {
+    margin-top: 40px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .declarations-table {
+    margin-top: 50px;
+  }
 }
 
 table {

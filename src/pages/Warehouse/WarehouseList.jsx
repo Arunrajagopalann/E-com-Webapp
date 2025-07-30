@@ -147,24 +147,24 @@ function WarehouseList() {
           <tbody>
             {warehouseList.map((warehouse, index) => (
               <tr key={warehouse._id || index}>
-                <td>{index + 1}</td>
-                <td>{warehouse.warehouseName}</td>
-                <td>{warehouse.warehouseType}</td>
-                <td>
+                <td data-label="S.No">{index + 1}</td>
+                <td data-label="Warehouse Name">{warehouse.warehouseName}</td>
+                <td data-label="Type">{warehouse.warehouseType}</td>
+                <td data-label="Primary Address">
                   {warehouse.address &&
                     warehouse.address.length > 0 &&
                     `${warehouse.address[0].addressLine1}, ${warehouse.address[0].city}`}
                 </td>
-                <td>{warehouse.poc}</td>
-                <td>{warehouse.stock}</td>
-                <td>
+                <td data-label="POC">{warehouse.poc}</td>
+                <td data-label="Stock">{warehouse.stock}</td>
+                <td data-label="Status">
                   <span
                     className={`status-badge ${warehouse.status === "ACTIVE" ? "active" : "inactive"}`}
                   >
                     {warehouse.status}
                   </span>
                 </td>
-                <td className="action-buttons">
+                <td data-label="Actions" className="action-buttons">
                   <button
                     className="btn-edit"
                     onClick={() =>

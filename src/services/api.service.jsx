@@ -1,5 +1,5 @@
 export const LoginService = async (data) => {
-    const API_BASE = process.env.REACT_APP_BASE_URL;
+    const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
   let result = null;
   try {
@@ -26,7 +26,7 @@ export const LoginService = async (data) => {
 
 // Add these brand-related API services
 export const getBrands = async () => {
-    const API_BASE = process.env.REACT_APP_BASE_URL;
+    const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
   let result = null;
   try {
@@ -54,7 +54,7 @@ export const getBrands = async () => {
 }
 
 export const getBrandById = async (id) => {
-    const API_BASE = process.env.REACT_APP_BASE_URL;
+    const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
   let result = null;
   try {
@@ -87,7 +87,7 @@ export const getBrandById = async (id) => {
 }
 
 export const createBrand = async (data) => {
-    const API_BASE = process.env.REACT_APP_BASE_URL;
+    const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
   let result = null;
   try {
@@ -121,7 +121,7 @@ export const updateBrand = async (id, data) => {
   let result = null;
   try {
     const accessToken = localStorage.getItem("accessToken");
-      const API_BASE = process.env.REACT_APP_BASE_URL;
+      const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
     console.log(`Updating brand with ID: ${id}`);
     console.log('Update data:', data);
@@ -162,7 +162,7 @@ export const updateBrand = async (id, data) => {
 }
 
 export const deleteBrand = async (id) => {
-    const API_BASE = process.env.REACT_APP_BASE_URL;
+    const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1';
 
   let result = null;
   try {

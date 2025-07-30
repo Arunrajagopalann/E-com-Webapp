@@ -155,11 +155,11 @@ function ProductList() {
           <tbody>
             {productList.map((product, index) => (
               <tr key={product._id || index}>
-                <td>{index + 1}</td>
-                <td>{product.name}</td>
-                <td className="product-price">₹{product.price}</td>
-                <td>{product.seller}</td>
-                <td>
+                <td data-label="S.No">{index + 1}</td>
+                <td data-label="Product Name">{product.name}</td>
+                <td data-label="Price" className="product-price">₹{product.price}</td>
+                <td data-label="Seller">{product.seller}</td>
+                <td data-label="Status">
                   <span
                     className={`status-badge ${
                       product.status === "ACTIVE" ? "active" : "inactive"
@@ -168,7 +168,7 @@ function ProductList() {
                     {product.status}
                   </span>
                 </td>
-                <td className="action-buttons">
+                <td data-label="Actions" className="action-buttons">
                   <button
                     className="btn-edit"
                     onClick={() => handleEdit(product._id)}

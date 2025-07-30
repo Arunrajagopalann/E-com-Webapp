@@ -38,6 +38,7 @@ const Dashboard = () => {
   const accessToken = localStorage.getItem("accessToken");
 
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [userDetails, setUserDetails] = useState("");
 
@@ -48,7 +49,15 @@ const Dashboard = () => {
     setIsCollapsed((prev) => !prev);
   };
 
-  const handleSetTitle = () => {
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+   const handleSetTitle = () => {
     const pathname = location.pathname;
     if (pathname.startsWith("/dashboard")) {
       setTitle("Dashboard");
@@ -256,11 +265,42 @@ const Dashboard = () => {
       <Outlet />
      </div> */}
 
-      <div className="d-flex" id="wrapper">
+     <div className="d-flex" id="wrapper">
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-overlay" 
+          onClick={closeMobileMenu}
+        />
+      )}
+      
+      <div
+        className={`border-end ${isCollapsed ? "collapsed" : ""} ${isMobileMenuOpen ? "mobile-open" : ""}`}
+        id="sidebar-wrapper"
+      >
         <div
           className={`border-end ${isCollapsed ? "collapsed" : ""}`}
           id="sidebar-wrapper"
         >
+          {/* Mobile Close Button */}
+          <button
+            className="btn d-lg-none mobile-close-btn"
+            onClick={closeMobileMenu}
+            style={{
+              background: "rgba(255, 255, 255, 0.2)",
+              border: "none",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "14px",
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              zIndex: 1002,
+            }}
+          >
+            ✕
+          </button>
           <div
             className={`d-flex px-3 py-2 sidebar-heading  ${isCollapsed ? "justify-content-center" : "justify-content-between"} align-items-center`}
             style={{ justifySelf: "center" }}
@@ -545,6 +585,7 @@ const Dashboard = () => {
             <Outlet />
           </div>
         </div>
+      </div>
       </div>
     </>
   );

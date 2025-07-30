@@ -36,16 +36,29 @@ const LoginSignup = () => {
     setSigninData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const API_BASE = process.env.REACT_APP_BASE_URL;
+  const API_BASE = process.env.REACT_APP_BASE_URL || 'http://localhost:8001/api/v1'
 
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
+    console.log('Attempting login with:', signinData);
+    console.log('API URL:', `${API_BASE}/login`);
+    
     try {
       const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signinData),
       });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Login failed:', errorData);
+        alert(errorData.message || 'Login failed. Please check your credentials.');
+        return;
+      }
+      
       const data = await response.json();
       if (data.statusCode === 200) {
         localStorage.setItem("accessToken", data.data.accessToken);

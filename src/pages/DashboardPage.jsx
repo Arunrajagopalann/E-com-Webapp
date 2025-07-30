@@ -51,6 +51,8 @@ const Dashboard = () => {
 
   // Products data
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -61,7 +63,7 @@ const Dashboard = () => {
 
   // Set page title based on current route
   const handleSetTitle = () => {
-    document.title = "Dashboard | E-com Admin";
+    document.title = "React App";
   };
 
   useEffect(() => {
@@ -362,6 +364,8 @@ const Dashboard = () => {
 
         // Initialize stats and products
         let products = [];
+        let categories = [];
+        let brands = [];
         let warehouses = [];
         let stats = {
           totalProducts: 0,
@@ -502,6 +506,7 @@ const Dashboard = () => {
             );
           }
 
+          categories = categoryArray;
           stats.totalCategories = categoryArray.length;
           console.log("Processed category array:", categoryArray);
         } else {
@@ -541,6 +546,7 @@ const Dashboard = () => {
             console.error("Unable to find brand array in response", brandsData);
           }
 
+          brands = brandArray;
           stats.totalBrands = brandArray.length;
           console.log("Processed brand array:", brandArray);
         } else {
@@ -637,6 +643,8 @@ const Dashboard = () => {
         console.log("Final calculated dashboard stats:", stats);
         console.log("Setting products array length:", products.length);
         setProducts(products);
+        setCategories(categories);
+        setBrands(brands);
         setDashboardStats({
           totalProducts: stats.totalProducts,
           totalCategories: stats.totalCategories,
@@ -821,7 +829,12 @@ const Dashboard = () => {
           {/* Charts Section */}
           <div className="dashboard">
             <h1>Dashboard Charts</h1>
-            <DashboardCharts dashboardStats={dashboardStats} />
+            <DashboardCharts 
+              dashboardStats={dashboardStats} 
+              products={products}
+              categories={categories}
+              brands={brands}
+            />
           </div>
         </div>
       </div>
