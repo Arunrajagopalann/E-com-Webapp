@@ -280,26 +280,245 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 992px) {
-  .address-grid {
-    grid-template-columns: 1fr;
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Extra Large Devices (1200px and up) */
+@media (min-width: 1200px) {
+  .warehouse-container {
+    padding: 2rem;
+  }
+  
+  .warehouse-table-container {
+    margin-top: 2rem;
+  }
+  
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
   }
 }
 
-@media (max-width: 768px) {
-  .warehouse-header,
-  .form-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+/* Large Devices (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .warehouse-container {
+    padding: 1.5rem;
   }
   
-  .form-actions {
+  .warehouse-table-container {
+    margin-top: 1.5rem;
+  }
+  
+  .form-container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+/* Medium Devices (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .warehouse-container {
+    padding: 1rem;
+  }
+  
+  .warehouse-header {
     flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .warehouse-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  
+  .form-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .address-grid {
+    grid-template-columns: 1fr;
   }
   
   .action-buttons {
     flex-direction: column;
     gap: 0.5rem;
+  }
+}
+
+/* Small Devices (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .warehouse-container {
+    padding: 0.75rem;
+  }
+  
+  .warehouse-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .warehouse-title {
+    font-size: 1.5rem;
+  }
+  
+  .warehouse-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  
+  .warehouse-table {
+    font-size: 0.875rem;
+  }
+  
+  .warehouse-table th,
+  .warehouse-table td {
+    padding: 0.75rem;
+  }
+  
+  .form-container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-add {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+/* Extra Small Devices (less than 576px) */
+@media (max-width: 575px) {
+  .warehouse-container {
+    padding: 0.5rem;
+  }
+  
+  .warehouse-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .warehouse-title {
+    font-size: 1.25rem;
+  }
+  
+  .warehouse-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  
+  .warehouse-table {
+    font-size: 0.75rem;
+  }
+  
+  .warehouse-table th,
+  .warehouse-table td {
+    padding: 0.5rem;
+  }
+  
+  .form-container {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+  
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-add {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn-edit,
+  .btn-delete {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Table Responsive for Mobile */
+@media (max-width: 991px) {
+  .warehouse-table-container {
+    border: 0;
+  }
+  
+  .warehouse-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .warehouse-table thead {
+    display: none;
+  }
+  
+  .warehouse-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  
+  .warehouse-table tbody td {
+    display: block;
+    text-align: right;
+    padding: 0.5rem;
+    border: none;
+  }
+  
+  .warehouse-table tbody td::before {
+    content: attr(data-label) ":";
+    font-weight: bold;
+    float: left;
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+    min-width: 80px;
+  }
+  
+  /* Improve alignment for specific fields */
+  .warehouse-table tbody td[data-label="Primary Address"]::before {
+    min-width: 100px;
+  }
+  
+  .warehouse-table tbody td[data-label="Actions"]::before {
+    min-width: 70px;
+  }
+  
+  .warehouse-table tbody td:last-child {
+    border-bottom: none;
   }
 }

@@ -139,9 +139,9 @@ function CatagoryList() {
             {categoryList.length > 0 ? (
               categoryList.map((category, index) => (
                 <tr key={category._id || index}>
-                  <td>{index + 1}</td>
-                  <td>{category.categoryName}</td>
-                  <td>
+                  <td data-label="S.No">{index + 1}</td>
+                  <td data-label="Category Name">{category.categoryName}</td>
+                  <td data-label="Status">
                   <span
                     className={`status-badge ${
                       category.status === "Active" ? "active" : "inactive"
@@ -150,7 +150,7 @@ function CatagoryList() {
                     {category.status}
                   </span>
                 </td>
-                <td className="action-buttons">
+                <td data-label="Actions" className="action-buttons">
                   <button
                     className="btn-edit"
                     onClick={() =>

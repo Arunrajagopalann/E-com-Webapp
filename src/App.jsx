@@ -9,6 +9,7 @@ import WarehouseList from "./pages/Warehouse/WarehouseList";
 import AddWarehouse from "./pages/Warehouse/addWarehouse";
 import AddCategory from "./pages/catagory/addCategory";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/responsive.css";
 import OffCanvasMenu from "./pages/Layout/OffCanvasMenu";
 import ProtectedRoute from "./utils/protectedRoutes";
 import ProductList from "./pages/Product/ProductList";
