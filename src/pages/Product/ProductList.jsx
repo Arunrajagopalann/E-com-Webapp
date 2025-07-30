@@ -9,7 +9,7 @@ const API_BASE = process.env.REACT_APP_BASE_URL;
 function ProductList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -136,11 +136,10 @@ function ProductList() {
     <div className="product-container">
       <div className="product-header">
         <h1 className="product-title">Product Management</h1>
-        <button className="btn-add" onClick={handleAdd}>
+        <button className="btn-add" onClick={() => navigate("/addProduct")} disabled={loading}>
           Add Product
         </button>
       </div>
-
       <div className="product-table-container">
         <table className="product-table">
           <thead>
@@ -189,7 +188,7 @@ function ProductList() {
         </table>
         <div>
           <nav aria-label="Page navigation example">
-            <ul className="pagination justify-content-end">
+            <ul className="pagination justify-content-end pe-2 pt-3">
               {/* Previous Button */}
               <li
                 className={`page-item ${currentPage === 1 ? "disabled" : ""}`}

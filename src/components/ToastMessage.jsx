@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { Toast } from "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useToast } from "../context/ToastContext"; // Adjust the path as necessary
 
-const ToastMessage = ({ show, message, variant = "success", onClose }) => {
+const ToastMessage = () => {
+  const { toast, hideToast } = useToast();
+  const { show, message, variant } = toast;
   const toastRef = useRef(null);
   const toastInstance = useRef(null);
 
@@ -10,7 +13,7 @@ const ToastMessage = ({ show, message, variant = "success", onClose }) => {
   useEffect(() => {
     if (toastRef.current) {
       toastInstance.current = new Toast(toastRef.current, {
-        autohide: true,
+        autohide: false,
         delay: 3000,
       });
     }
@@ -48,7 +51,7 @@ const ToastMessage = ({ show, message, variant = "success", onClose }) => {
     if (!element) return;
 
     const handleHidden = () => {
-      if (onClose) onClose();
+      hideToast();
     };
 
     element.addEventListener("hidden.bs.toast", handleHidden);
@@ -56,7 +59,7 @@ const ToastMessage = ({ show, message, variant = "success", onClose }) => {
     return () => {
       element.removeEventListener("hidden.bs.toast", handleHidden);
     };
-  }, [onClose]);
+  }, [hideToast]);
 
   return (
     <div

@@ -11,7 +11,7 @@ function WarehouseList() {
   const [warehouseList, setWarehouseList] = useState([]);
   const [allWarehouses, setAllWarehouses] = useState([]); // Add this missing state
   const [totalWarehouses, setTotalWarehouses] = useState(0); // Add this missing state
-  const itemsPerPage = 3; // Add this for pagination
+  const itemsPerPage = 5; // Add this for pagination
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -185,49 +185,53 @@ function WarehouseList() {
           </tbody>
         </table>
         <div>
-        <nav aria-label="Page navigation example">
-          <ul className="pagination justify-content-end">
-            {/* Previous Button */}
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              >
-                &laquo;
-              </button>
-            </li>
-
-            {/* Dynamic Page Numbers */}
-            {Array.from({ length: totalPages }, (_, i) => (
+          <nav aria-label="Page navigation example">
+            <ul className="pagination justify-content-end pe-2 pt-3">
+              {/* Previous Button */}
               <li
-                key={i + 1}
-                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
               >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage(i + 1)}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                 >
-                  {i + 1}
+                  &laquo;
                 </button>
               </li>
-            ))}
 
-            {/* Next Button */}
-            <li
-              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
-            >
-              <button
-                className="page-link"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
+              {/* Dynamic Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li
+                  key={i + 1}
+                  className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+
+              {/* Next Button */}
+              <li
+                className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
               >
-                &raquo;
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   );

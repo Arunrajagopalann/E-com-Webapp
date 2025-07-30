@@ -1,4 +1,4 @@
-/* Dashboard charts styling */
+Dashboard charts styling
 .dashboard-charts {
   margin-top: 2rem;
   padding: 0 15px;
@@ -35,7 +35,7 @@
 }
 
 /* Dashboard stats styling */
-.dashboard-stats {
+ .dashboard-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -74,4 +74,4 @@
   font-size: 20px;
   font-weight: 600;
   margin: 0;
-}
+} 

@@ -27,7 +27,7 @@ function BrandList() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [allBrands, setAllBrands] = useState([]); // Add this missing state // Add this missing state
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
   const accessToken = localStorage.getItem("accessToken");
   const totalPages = Math.ceil(totalBrands / itemsPerPage);
   const [pendingNavigation, setPendingNavigation] = useState(false); // Add pending navigation state
@@ -184,7 +184,7 @@ function BrandList() {
         )}
         <div>
           <nav aria-label="Page navigation example">
-            <ul className="pagination justify-content-end">
+            <ul className="pagination justify-content-end pe-2 pt-3">
               {/* Previous Button */}
               <li
                 className={`page-item ${currentPage === 1 ? "disabled" : ""}`}

@@ -15,7 +15,7 @@ function CatagoryList() {
   const [categoryList, setCategoryList] = useState([]);
   const [allCategories, setAllCategories] = useState([]); // Add this missing state
   const [totalCategories, setTotalCategories] = useState(0); // Add this missing state
-  const itemsPerPage = 3; // Add this for pagination
+  const itemsPerPage = 5; // Add this for pagination
   const totalPages = Math.ceil(totalCategories / itemsPerPage);
   React.useEffect(() => {
     fetchCategories("categories", categories);
@@ -142,42 +142,42 @@ function CatagoryList() {
                   <td>{index + 1}</td>
                   <td>{category.categoryName}</td>
                   <td>
-                  <span
-                    className={`status-badge ${
-                      category.status === "Active" ? "active" : "inactive"
-                    }`}
-                  >
-                    {category.status}
-                  </span>
-                </td>
-                <td className="action-buttons">
-                  <button
-                    className="btn-edit"
-                    onClick={() =>
-                      navigate(`/addCategory?type=edit&id=${category._id}`)
-                    }
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn-delete"
-                    onClick={() => deleteCategory(category._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                    <span
+                      className={`status-badge ${
+                        category.status === "Active" ? "active" : "inactive"
+                      }`}
+                    >
+                      {category.status}
+                    </span>
+                  </td>
+                  <td className="action-buttons">
+                    <button
+                      className="btn-edit"
+                      onClick={() =>
+                        navigate(`/addCategory?type=edit&id=${category._id}`)
+                      }
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn-delete"
+                      onClick={() => deleteCategory(category._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4">No brands found</td>
-                </tr>
-              )}
-            </tbody>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4">No brands found</td>
+              </tr>
+            )}
+          </tbody>
         </table>
         <div>
           <nav aria-label="Page navigation example">
-            <ul className="pagination justify-content-end">
+            <ul className="pagination justify-content-end pe-2 pt-3">
               {/* Previous Button */}
               <li
                 className={`page-item ${currentPage === 1 ? "disabled" : ""}`}

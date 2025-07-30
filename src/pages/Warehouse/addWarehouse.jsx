@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom"; // Added useSearchParams
+import { useToast } from "../../context/ToastContext";
 import "./Warehouse.css";
-import ToastMessage from "../../components/ToastMessage";
-
+import Loader from "../../components/loading";
 function AddWarehouse() {
-  const [pendingNavigation, setPendingNavigation] = useState(false);
-    const [error, setError] = useState(null);
-  
-    const [toast, setToast] = useState({
-      show: false,
-      message: "",
-      variant: "success",
-    });
-  
-    const showToast = (msg, variant = "success") => {
-      console.log("Showing toast:", msg);
-      setToast({ show: true, message: msg, variant });
-      setTimeout(() => {
-        navigate("/warehouse");
-      }, 1000);
-    };
+  const { showToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const type = searchParams.get("type");
   const isEdit = type === "edit";
+
+  // Add missing state variables
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
     warehouseName: "",
@@ -47,6 +37,7 @@ function AddWarehouse() {
   });
 
   const API_BASE = process.env.REACT_APP_BASE_URL;
+  const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
     if (isEdit && id) {
@@ -56,7 +47,6 @@ function AddWarehouse() {
 
   const fetchWarehouseData = async () => {
     try {
-      const accessToken = localStorage.getItem("accessToken");
       const response = await fetch(`${API_BASE}/warehouse/${id}`, {
         method: "GET",
         headers: {
@@ -65,9 +55,9 @@ function AddWarehouse() {
         },
       });
       const data = await response.json();
-      
+
       if (data.statusCode === 200) {
-        setFormData(data.data[0],);
+        setFormData(data.data[0]);
       }
     } catch (error) {
       console.error("Error fetching warehouse:", error);
@@ -95,42 +85,70 @@ function AddWarehouse() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      alert("Unauthorized: Please log in.");
-      return;
-    }
-    try {
-      const url = isEdit ? `${API_BASE}/warehouse/${id}` : `${API_BASE}/warehouse`;
-      const method = isEdit ? "PUT" : "POST";
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-       if (result.statusCode == 200) {
-        // Add the pending navigation here too
-        setPendingNavigation(true);
-        showToast(result.message, "success");
-        // Remove any direct navigation that might be here
-        // Do NOT call navigate("/brand") here
-      } else {
-        setError(result.message || "Operation failed");
-        setPendingNavigation(true); // Set pending navigation flag
-        showToast(` ${result.message || "Unknown error"}`);
-      }
-       } catch (error) {
-      alert(isEdit ? "Error updating warehouse." : "Error creating warehouse.");
-      console.error("Submit error:", error);
-    }
+  const updateWarehouse = async (id, warehouseData) => {
+    const response = await fetch(`${API_BASE}/warehouse/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(warehouseData),
+    });
+    return response.json();
   };
 
+  const createWarehouse = async (warehouseData) => {
+    const response = await fetch(`${API_BASE}/warehouse`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(warehouseData),
+    });
+    return response.json();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      let result;
+      if (isEdit) {
+        result = await updateWarehouse(id, formData);
+      } else {
+        result = await createWarehouse(formData);
+      }
+
+      if (result.statusCode === 200) {
+        showToast(result.message, "success", () => {
+          navigate("/warehouse");
+        }); 
+      } else {
+        setError(result.message || "Operation failed");
+        showToast(
+          `${isEdit ? "Update" : "Create"} failed: ${
+            result.message || "Unknown error"
+          }`,
+          "danger", () => {
+            console.error("Operation error:", result);
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      setError(error.message || "An error occurred");
+      showToast(
+        `${isEdit ? "Update" : "Create"} failed: ${error.message}`,
+        "danger"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (loading) return <Loader />;
   return (
     <div className="warehouse-form-container">
       <div className="form-header">
@@ -330,22 +348,6 @@ function AddWarehouse() {
           </button>
         </div>
       </form>
-      <ToastMessage
-        show={toast.show}
-        message={toast.message}
-        variant={toast.variant}
-        onClose={() => {
-          console.log("Toast closing");
-          // setToast({ ...toast, show: false });
-
-          if (pendingNavigation) {
-            console.log("Navigating after toast closed");
-            setPendingNavigation(false);
-            navigate("/warehouse");
-          }
-           
-        }}
-      />
     </div>
   );
 }

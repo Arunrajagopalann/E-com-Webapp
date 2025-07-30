@@ -1,30 +1,18 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useToast } from "../../context/ToastContext"; // Import the global toast hook
 import "./Brand.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-
+import Loader from "../../components/loading";
 import {
   getBrandById,
   createBrand,
   updateBrand,
 } from "../../services/api.service";
-import ToastMessage from "../../components/ToastMessage";
 
 function AddBrand() {
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    variant: "success",
-  });
-
-  const showToast = (msg, variant = "success") => {
-    console.log("Showing toast:", msg);
-    setToast({ show: true, message: msg, variant });
-    setTimeout(() => {
-      navigate("/brand");
-    }, 500);
-  };
+  const { showToast } = useToast(); // Add this line to use global toast
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,8 +21,6 @@ function AddBrand() {
   const isEdit = type === "edit";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [pendingNavigation, setPendingNavigation] = useState(false); // Add pending navigation state
-
   const [formData, setFormData] = useState({
     brandName: "",
     status: "Active",
@@ -46,12 +32,14 @@ function AddBrand() {
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
-        showToast("Unauthorized: Please log in.");
-        navigate("/login");
+        showToast("Unauthorized: Please log in.", 'danger', () => {
+          navigate("/login");
+        });
         return;
       }
 
       console.log(`Fetching brand data for ID: ${id}`);
+
       const result = await getBrandById(id);
 
       if (result.success && result.data) {
@@ -64,13 +52,17 @@ function AddBrand() {
         console.error("Failed to fetch brand data:", result);
         setError(result.message || "Failed to load brand data");
         showToast(
-          "Failed to load brand data: " + (result.message || "Unknown error")
+          "Failed to load brand data: ", 'danger', () => {
+            console.error("Failed to load brand data:", result);
+          }
         );
       }
     } catch (error) {
       console.error("Fetch brand error:", error);
       setError(error.message || "An error occurred while fetching brand data");
-      alert(`Failed to fetch brand data: ${error.message}`);
+      showToast(`Failed to fetch brand data: ${error.message}`, 'danger', () => {
+        console.error("Failed to fetch brand data:", error);
+      });
     } finally {
       setLoading(false);
     }
@@ -93,8 +85,11 @@ function AddBrand() {
 
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      showToast("Please log in first!");
-      navigate("/login");
+      showToast("Please log in first!",'danger',()=>{
+        navigate("/login");
+      }
+      );
+      // navigate("/login");
       return;
     }
 
@@ -112,31 +107,36 @@ function AddBrand() {
 
       console.log("API Response:", result);
 
-      if (result.stausCode == 200) {
-        // Add the pending navigation here too
-        setPendingNavigation(true);
-        showToast(
-         result.message,
-          "success"
-        );
-        // Remove any direct navigation that might be here
-        // Do NOT call navigate("/brand") here
+      if (result.statusCode === 200) {
+        showToast(result.message, "success",()=>{
+          navigate("/brand");
+        }); // Use global toast
+        // navigate("/brand"); 
       } else {
         setError(result.message || "Operation failed");
-        setPendingNavigation(true); // Set pending navigation flag
         showToast(
-          ` ${result.message || "Unknown error"}`
+          `${isEdit ? "Update" : "Create"} failed: ${
+            result.message || "Unknown error"
+          }`,
+          "danger", () => {
+            console.error("Operation error:", result);
+          }
         );
       }
     } catch (error) {
       console.error("Submit error:", error);
       setError(error.message || "An error occurred");
-      showToast(`${isEdit ? "Update" : "Create"} failed: ${error.message}`);
+      showToast(
+        `${isEdit ? "Update" : "Create"} failed: ${error.message}`,
+        "danger", () => {
+          console.error("Operation error:", error);
+        }
+      );
     } finally {
       setLoading(false);
     }
   };
-
+  if (loading) return <Loader />;
   return (
     <div className="brand-form-container">
       <div className="form-header">
@@ -191,22 +191,7 @@ function AddBrand() {
           </button>
         </div>
       </form>
-
-      <ToastMessage
-        show={toast.show}
-        message={toast.message}
-        variant={toast.variant}
-        onClose={() => {
-          console.log("Toast closing");
-          // setToast({ ...toast, show: false });
-
-          if (pendingNavigation) {
-            console.log("Navigating after toast closed");
-            setPendingNavigation(false);
-            navigate("/brand");
-          }
-        }}
-      />
+       
     </div>
   );
 }

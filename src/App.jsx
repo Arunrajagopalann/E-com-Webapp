@@ -1,30 +1,63 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastProvider } from "./context/ToastContext";
+import GlobalToast from "./components/GlobalToast";
+import routesConfig from "./routesConfig";
 import LoginSignup from "./pages/loginPage/loginPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import CatagoryList from "./pages/catagory/categoryList";
+import CatagoryList from "./pages/category/categoryList";
 import BrandList from "./pages/Brand/BrandList";
 import AddBrand from "./pages/Brand/addBrand";
 import WarehouseList from "./pages/Warehouse/WarehouseList";
 import AddWarehouse from "./pages/Warehouse/addWarehouse";
-import AddCategory from "./pages/catagory/addCategory";
+import AddCategory from "./pages/category/addCategory";
 import "bootstrap/dist/css/bootstrap.min.css";
 import OffCanvasMenu from "./pages/Layout/OffCanvasMenu";
 import ProtectedRoute from "./utils/protectedRoutes";
 import ProductList from "./pages/Product/ProductList";
 import AddProduct from "./pages/Product/addProduct";
-import { Navigate, Outlet } from 'react-router-dom';
+import ProfileView from "./pages/Profile/profileview";
+import { Navigate, Outlet } from "react-router-dom";
 
 function App() {
-const isAuthenticated = localStorage.getItem("accessToken")? true : false;
+  const isAuthenticated = localStorage.getItem("accessToken") ? true : false;
 
   return (
-    <Router>
-      <div className="App">
+    <BrowserRouter>
+      <ToastProvider>
+        <GlobalToast /> {/* This stays visible across all routes */}
         <Routes>
-          <Route path="/" element={ isAuthenticated? <Navigate to="/dashboard" replace /> : <LoginSignup />} />
-          <Route path="/login" element={ isAuthenticated? <Navigate to="/dashboard" replace /> :<LoginSignup />} />
-          <Route path="/signup" element={ isAuthenticated? <Navigate to="/dashboard" replace /> :<LoginSignup />} />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LoginSignup />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LoginSignup />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LoginSignup />
+              )
+            }
+          />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<OffCanvasMenu />}>
@@ -36,15 +69,16 @@ const isAuthenticated = localStorage.getItem("accessToken")? true : false;
               <Route path="/addBrand" element={<AddBrand />} />
               <Route path="/*" element={<NotFoundPage />} />
               <Route path="/warehouse" element={<WarehouseList />} />
-               {/* <Route path="/addWarehouse" element={<AddWarehouse />} />  */}
+              {/* <Route path="/addWarehouse" element={<AddWarehouse />} />  */}
               <Route path="/warehouse/add" element={<AddWarehouse />} />
               <Route path="/product" element={<ProductList />} />
               <Route path="/addProduct" element={<AddProduct />} />
+              <Route path="/UserProfile" element={<ProfileView />} />
             </Route>
           </Route>
         </Routes>
-      </div>
-    </Router>
+      </ToastProvider>
+    </BrowserRouter>
   );
 }
 
