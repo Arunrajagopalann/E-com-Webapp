@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./OffCanvasMenu.css";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "./Dashboard.css";
 import {
@@ -40,7 +40,9 @@ const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [title, setTitle] = useState("");
  const [userDetails, setUserDetails] = useState("");
+ const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   console.log("location", location);
 
   const toggleSidebar = () => {
@@ -55,7 +57,32 @@ const Dashboard = () => {
     setIsMobileMenuOpen(false);
   };
 
-   const handleSetTitle = () => {
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen((prev) => !prev);
+  };
+
+  const closeProfileDropdown = () => {
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("UserId");
+    navigate("/login");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/UserProfile");
+    closeProfileDropdown();
+  };
+
+  const handleMessageClick = () => {
+    // Navigate to messages page or show message modal
+    console.log("Message clicked");
+    closeProfileDropdown();
+  };
+
+  const handleSetTitle = () => {
     const pathname = location.pathname;
     if (pathname.startsWith("/dashboard")) {
       setTitle("Dashboard");
@@ -126,6 +153,20 @@ const Dashboard = () => {
     fetchData();
      fetchUser();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileDropdownOpen && !event.target.closest('.profile-dropdown-container')) {
+        closeProfileDropdown();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileDropdownOpen]);
 
   if (!dashboardStats) {
     return <div>Loading...</div>;
@@ -371,15 +412,126 @@ const Dashboard = () => {
             >
               {title}
             </span>
-            <div className="d-flex align-items-center" style={{ marginLeft: 'auto' }}>
-              <a
-                className="btn btn-danger fw-semibold"
-                href="/login"
-                style={{ minWidth: 90, padding: '8px 20px', fontSize: 16 }}
-                onClick={() => { localStorage.removeItem("accessToken"); }}
+            
+            {/* Profile Dropdown */}
+            <div className="profile-dropdown-container position-relative">
+              <button
+                className="btn btn-outline-primary d-flex align-items-center gap-2"
+                onClick={toggleProfileDropdown}
+                style={{
+                  minWidth: 'auto',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  borderRadius: '20px',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  color: '#667eea',
+                  transition: 'all 0.3s ease',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '200px'
+                }}
               >
-                Logout
-              </a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  style={{ flexShrink: 0 }}
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 4a8 8 0 0 0-6.96 11.947A4.99 4.99 0 0 1 9 14h6a4.99 4.99 0 0 1 3.96 1.947A8 8 0 0 0 12 4m7.943 14.076q.188-.245.36-.502A9.96 9.96 0 0 0 22 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.96 9.96 0 0 0 2.057 6.076l-.005.018l.355.413A9.98 9.98 0 0 0 12 22q.324 0 .644-.02a9.95 9.95 0 0 0 5.031-1.745a10 10 0 0 0 1.918-1.728l.355-.413zM12 6a3 3 0 1 0 0 6a3 3 0 0 0 0-6"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span style={{ 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis', 
+                  whiteSpace: 'nowrap',
+                  maxWidth: '120px'
+                }}>
+                  {userDetails?.name || 'Profile'}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  style={{
+                    transform: isProfileDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease',
+                    flexShrink: 0
+                  }}
+                >
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+
+              {/* Dropdown Menu */}
+              {isProfileDropdownOpen && (
+                <div className="dropdown-menu show">
+                  <div
+                    className="dropdown-item"
+                    onClick={handleProfileClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style={{ color: '#667eea' }}
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12 4a8 8 0 0 0-6.96 11.947A4.99 4.99 0 0 1 9 14h6a4.99 4.99 0 0 1 3.96 1.947A8 8 0 0 0 12 4m7.943 14.076q.188-.245.36-.502A9.96 9.96 0 0 0 22 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.96 9.96 0 0 0 2.057 6.076l-.005.018l.355.413A9.98 9.98 0 0 0 12 22q.324 0 .644-.02a9.95 9.95 0 0 0 5.031-1.745a10 10 0 0 0 1.918-1.728l.355-.413zM12 6a3 3 0 1 0 0 6a3 3 0 0 0 0-6"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>My Profile</span>
+                  </div>
+                  
+                  <div
+                    className="dropdown-item"
+                    onClick={handleMessageClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style={{ color: '#667eea' }}
+                    >
+                      <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <span>Messages</span>
+                  </div>
+                  
+                  <div
+                    className="dropdown-item"
+                    onClick={handleLogout}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style={{ color: '#dc3545' }}
+                    >
+                      <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                    <span style={{ color: '#dc3545' }}>Logout</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </nav>
