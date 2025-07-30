@@ -34,14 +34,12 @@ ChartJS.register(
 
 const Dashboard = () => {
   const [dashboardStats, setDashboardStats] = useState(null);
-  const API_BASE = process.env.REACT_APP_BASE_URL;
+ const API_BASE = process.env.REACT_APP_BASE_URL;
   const accessToken = localStorage.getItem("accessToken");
-
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [userDetails, setUserDetails] = useState("");
-
+ const [userDetails, setUserDetails] = useState("");
   const location = useLocation();
   console.log("location", location);
 
@@ -61,25 +59,13 @@ const Dashboard = () => {
     const pathname = location.pathname;
     if (pathname.startsWith("/dashboard")) {
       setTitle("Dashboard");
-    } else if (
-      pathname.startsWith("/brand") ||
-      pathname.startsWith("/addBrand")
-    ) {
+    } else if (pathname.startsWith("/brand") || pathname.startsWith("/addBrand")) {
       setTitle("Brand");
-    } else if (
-      pathname.startsWith("/category") ||
-      pathname.startsWith("/addCategory")
-    ) {
+    } else if (pathname.startsWith("/category") || pathname.startsWith("/addCategory")) {
       setTitle("Category");
-    } else if (
-      pathname.startsWith("/product") ||
-      pathname.startsWith("/addProduct")
-    ) {
+    } else if (pathname.startsWith("/product") || pathname.startsWith("/addProduct")) {
       setTitle("Product");
-    } else if (
-      pathname.startsWith("/warehouse") ||
-      pathname.startsWith("/addWarehouse")
-    ) {
+    } else if (pathname.startsWith("/warehouse") || pathname.startsWith("/addWarehouse")) {
       setTitle("Warehouse");
     } else if (
       pathname === "/" ||
@@ -92,7 +78,7 @@ const Dashboard = () => {
     }
   };
 
-  const fetchUser = async () => {
+ const fetchUser = async () => {
     try {
       const response = await fetch(`${API_BASE}/user`, {
         method: "GET",
@@ -114,7 +100,7 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
+    useEffect(() => {
     handleSetTitle();
   }, [location.pathname]);
 
@@ -138,13 +124,14 @@ const Dashboard = () => {
     };
 
     fetchData();
-    fetchUser();
+     fetchUser();
   }, []);
 
   if (!dashboardStats) {
     return <div>Loading...</div>;
   }
 
+  
   const menuItems = [
     {
       name: "Dashboard",
@@ -238,7 +225,7 @@ const Dashboard = () => {
     },
     // {
     //   name: "My Profile",
-    //   link: "myprofile",
+    //   link: "UserProfile",
     //   icon: (
     //     <svg
     //       xmlns="http://www.w3.org/2000/svg"
@@ -259,7 +246,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* <div className="dashboard">
+     {/* <div className="dashboard">
       <h1>Dashboard</h1>
        <DashboardCharts dashboardStats={dashboardStats} />
       <Outlet />
@@ -279,8 +266,8 @@ const Dashboard = () => {
         id="sidebar-wrapper"
       >
         <div
-          className={`border-end ${isCollapsed ? "collapsed" : ""}`}
-          id="sidebar-wrapper"
+          className={`d-flex px-3 py-2 sidebar-heading ${isCollapsed ? "justify-content-center" : "justify-content-between"} align-items-center`}
+          style={{ justifySelf: "center" }}
         >
           {/* Mobile Close Button */}
           <button
@@ -302,37 +289,33 @@ const Dashboard = () => {
             ✕
           </button>
           <div
-            className={`d-flex px-3 py-2 sidebar-heading  ${isCollapsed ? "justify-content-center" : "justify-content-between"} align-items-center`}
-            style={{ justifySelf: "center" }}
+            style={{
+              height: "48px",
+              width: isCollapsed ? "48px" : "150px",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "linear-gradient(to right, #667eea, #5fc3e4)", // Gradient theme
+              color: "white",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              fontSize: isCollapsed ? "16px" : "14px",
+              boxShadow: "0 2px 10px rgba(102, 126, 234, 0.3)",
+            }}
+            onClick={toggleSidebar}
           >
-            <div
-              style={{
-                height: "48px",
-                width: isCollapsed ? "48px" : "150px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "linear-gradient(to right, #667eea, #5fc3e4)", // Gradient theme
-                color: "white",
-                borderRadius: "8px",
-                fontWeight: "bold",
-                fontSize: isCollapsed ? "16px" : "14px",
-                boxShadow: "0 2px 10px rgba(102, 126, 234, 0.3)",
-              }}
-              onClick={toggleSidebar}
-            >
-              {isCollapsed ? "E" : "E-Commerce"}
-            </div>
-            {/* <img
+            {isCollapsed ? "E" : "E-Commerce"}
+          </div>
+          {/* <img
   src={logo}
   alt="Logo"
   style={{ height: '48px', cursor: 'pointer', transition: 'all 0.2s ease' }}
   onClick={toggleSidebar}
 /> */}
 
-            {/* {!isCollapsed && (
+          {/* {!isCollapsed && (
             <button className="btn btn-sm d-flex align-items-center gap-2" onClick={toggleSidebar}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
                 <path
@@ -342,253 +325,74 @@ const Dashboard = () => {
               </svg>
             </button>
           )} */}
-          </div>
-
-          <div className="list-group list-group-flush">
-            {menuItems.map((item, index) => (
-              <Link
-                to={`/${item.link}`}
-                key={index}
-                className="list-group-item list-group-item-action d-flex align-items-center gap-2"
-              >
-                {item.icon}
-                {!isCollapsed && <span>{item.name}</span>}
-              </Link>
-            ))}
-          </div>
         </div>
 
-        <div id="page-content-wrapper" className="w-100">
-          <nav className="navbar navbar-expand-lg navbar-light border-bottom px-3 py-2 w-100">
-            <div className="container-fluid d-flex justify-content-between align-items-center">
-              <span
-                className="navbar-brand mb-0 h4"
-                style={{
-                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.15)",
-                  fontWeight: "600",
-                }}
-              >
-                {title}
-              </span>
-              <div className="d-flex align-items-center gap-3">
-                <div className="dropdown">
-                  <button
-                    className="btn position-relative"
-                    style={{
-                      background: "rgba(255, 255, 255, 0.2)",
-                      color: "white",
-                      borderRadius: "50%",
-                      width: "40px",
-                      height: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      border: "none",
-                      transition: "all 0.3s ease",
-                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.3)";
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.2)";
-                      e.currentTarget.style.transform = "translateY(0)";
-                    }}
-                    data-bs-toggle="dropdown"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M11.997 21.385q-.668 0-1.14-.475q-.472-.474-.472-1.14h3.23q0 .67-.475 1.143q-.476.472-1.143.472M5.5 18.769q-.213 0-.356-.144T5 18.268t.144-.356t.356-.143h1.116V9.846q0-1.96 1.24-3.447T11 4.546V4q0-.417.291-.708q.291-.292.707-.292t.709.292T13 4v.075q-.442.616-.683 1.342q-.24.727-.24 1.487q0 1.998 1.395 3.422t3.374 1.463h.27q.134 0 .268-.02v6H18.5q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm11.464-9.365q-1.041 0-1.772-.729t-.73-1.769t.728-1.772t1.77-.73t1.77.728t.732 1.77t-.729 1.771t-1.77.73"
-                      />
-                    </svg>
-                    <span
-                      className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                      style={{ boxShadow: "0 0 5px rgba(220, 53, 69, 0.5)" }}
-                    />
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <span className="dropdown-item d-flex align-items-center gap-2">
-                        <div
-                          style={{
-                            width: "8px",
-                            height: "8px",
-                            borderRadius: "50%",
-                            background: "#5fc3e4",
-                          }}
-                        ></div>
-                        New Message
-                      </span>
-                    </li>
-                    <li>
-                      <span className="dropdown-item d-flex align-items-center gap-2">
-                        <div
-                          style={{
-                            width: "8px",
-                            height: "8px",
-                            borderRadius: "50%",
-                            background: "#667eea",
-                          }}
-                        ></div>
-                        Task Due
-                      </span>
-                    </li>
-                    <li>
-                      <span className="dropdown-item d-flex align-items-center gap-2">
-                        <div
-                          style={{
-                            width: "8px",
-                            height: "8px",
-                            borderRadius: "50%",
-                            background: "#5fc3e4",
-                          }}
-                        ></div>
-                        Server Update
-                      </span>
-                    </li>
-                  </ul>
-                </div>
+        <div className="list-group list-group-flush">
+          {menuItems.map((item, index) => (
+            <Link
+              to={`/${item.link}`}
+              key={index}
+              className="list-group-item list-group-item-action d-flex align-items-center gap-2"
+              onClick={closeMobileMenu}
+            >
+              {item.icon}
+              {!isCollapsed && <span>{item.name}</span>}
+            </Link>
+          ))}
+        </div>
+      </div>
 
-                <div className="dropdown">
-                  <button
-                    className="btn d-flex align-items-center gap-3"
-                    data-bs-toggle="dropdown"
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.1)")
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
-                  >
-                    <div
-                      className="rounded-circle d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        background: "linear-gradient(135deg, #667eea, #5fc3e4)", // Gradient matching the theme
-                        color: "white",
-                        border: "2px solid #ffffff",
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                        boxShadow: "0 2px 8px rgba(95, 195, 228, 0.3)",
-                      }}
-                    >
-                      A
-                    </div>
-                    <div
-                      className="text-start d-none d-md-block"
-                      style={{ color: "white" }}
-                    >
-                      <div className="fw-semibold">
-                        {userDetails.name || ""}
-                      </div>
-                      <div className="small" style={{ opacity: 0.9 }}>
-                        {userDetails.role || ""}
-                      </div>
-                    </div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      style={{ color: "white" }}
-                    >
-                      <path fill="currentColor" d="M7 10l5 5 5-5H7z" />
-                    </svg>
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    {/* <li>
-                      <a
-                        className="dropdown-item d-flex align-items-center gap-2"
-                        href="/UserProfile"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            fill="#667eea"
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3s-3-1.34-3-3s1.34-3 3-3zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08c1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z"
-                          />
-                        </svg>
-                        Profile
-                      </a>
-                    </li> */}
-                    <li>
-                      <a
-                        className="dropdown-item d-flex align-items-center gap-2"
-                        href="#"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            fill="#5fc3e4"
-                            d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z"
-                          />
-                        </svg>
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item d-flex align-items-center gap-2"
-                        href="/login"
-                        onClick={() => {
-                          localStorage.removeItem("accessToken");
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            fill="#dc3545"
-                            d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
-                          />
-                        </svg>
-                        Logout
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+      <div id="page-content-wrapper" className="w-100">
+        <nav className="navbar navbar-expand-lg navbar-light border-bottom px-3 py-2 w-100">
+          <div className="container-fluid d-flex justify-content-between align-items-center">
+            {/* Mobile Menu Toggle */}
+            <button
+              className="btn d-lg-none mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              style={{
+                background: "rgba(255, 255, 255, 0.2)",
+                border: "none",
+                color: "white",
+                padding: "8px",
+                borderRadius: "4px",
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+              </svg>
+            </button>
+            
+            <span
+              className="navbar-brand mb-0 h4"
+              style={{
+                textShadow: "0 1px 3px rgba(0, 0, 0, 0.15)",
+                fontWeight: "600",
+              }}
+            >
+              {title}
+            </span>
+            <div className="d-flex align-items-center" style={{ marginLeft: 'auto' }}>
+              <a
+                className="btn btn-danger fw-semibold"
+                href="/login"
+                style={{ minWidth: 90, padding: '8px 20px', fontSize: 16 }}
+                onClick={() => { localStorage.removeItem("accessToken"); }}
+              >
+                Logout
+              </a>
             </div>
-          </nav>
-
-          <div className="container-fluid p-0 dash-sidebar-content">
-            <Outlet />
           </div>
+        </nav>
+
+        <div className="container-fluid p-0 dash-sidebar-content">
+          <Outlet />
         </div>
       </div>
-      </div>
+    </div>
     </>
+
   );
 };
 
 export default Dashboard;
+//offCanvas.jsx
